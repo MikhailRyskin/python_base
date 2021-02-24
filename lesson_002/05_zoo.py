@@ -26,3 +26,5 @@ print(zoo)
 # здесь ваш код
 print('Лев - клетка', zoo.index('lion') + 1)
 print('Жаворонок - клетка', zoo.index('lark') + 1)
+
+# зачет!

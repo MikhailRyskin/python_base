@@ -30,3 +30,5 @@ print(*garden_notmeadow)
 # здесь ваш код
 meadow_notgarden = meadow_set - garden_set
 print(*meadow_notgarden)
+
+# зачет!

@@ -39,3 +39,5 @@ word_3 = secret_message[2][5:15:2]
 word_4 = secret_message[3][12:6:-1]
 word_5 = secret_message[4][20:15:-1]
 print(word_1, word_2, word_3, word_4, word_5)
+
+# зачет!
