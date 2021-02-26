@@ -10,5 +10,9 @@
 #   Студенту надо попросить ХХХ.ХХ рублей
 
 educational_grant, expenses = 10000, 12000
-
-# TODO здесь ваш код
+total_expenses = expenses
+for _ in range(9):
+    expenses *= 1.03
+    total_expenses += expenses
+cash_aid = round(total_expenses - educational_grant * 10, 2)
+print(f'Студенту надо попросить {cash_aid} рублей')

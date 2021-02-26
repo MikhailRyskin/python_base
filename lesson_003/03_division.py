@@ -10,5 +10,9 @@
 #   Целочисленное деление ХХХ на YYY дает ZZZ
 
 a, b = 179, 37
-
-# TODO здесь ваш код
+remainder = a - b
+result_division = 1
+while remainder >= b:
+    remainder -= b
+    result_division += 1
+print(result_division)
