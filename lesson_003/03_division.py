@@ -16,3 +16,5 @@ while remainder >= b:
     remainder -= b
     result_division += 1
 print(result_division)
+
+# зачет!

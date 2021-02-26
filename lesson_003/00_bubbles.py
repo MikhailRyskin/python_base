@@ -58,3 +58,5 @@ for _ in range(100):
     color_bubble(x, y, shift, color)
 
 sd.pause()
+
+# зачет!
