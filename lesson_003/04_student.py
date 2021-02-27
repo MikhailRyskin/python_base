@@ -16,3 +16,5 @@ for _ in range(9):
     total_expenses += expenses
 cash_aid = round(total_expenses - educational_grant * 10, 2)
 print(f'Студенту надо попросить {cash_aid} рублей')
+
+# зачет!

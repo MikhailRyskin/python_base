@@ -53,7 +53,8 @@ store = {
 #         подсчет количества товара
 #         подсчет стоимости товара
 #     вывод на консоль количества и стоимости товара на складе
-
+# TODO Используйте .items() - это удобно и нужные данные сразу попадают в переменные цикла
+#  for name, code in goods.items():
 for product in goods:
     product_total_quantity = 0
     product_total_cost = 0

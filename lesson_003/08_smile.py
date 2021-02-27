@@ -28,3 +28,5 @@ for _ in range(10):
     smile(x, y, color)
 
 sd.pause()
+
+# зачет!

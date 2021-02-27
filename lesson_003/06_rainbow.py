@@ -35,3 +35,5 @@ for color in rainbow_colors:
     radius -= 20
 
 sd.pause()
+
+# зачет!
