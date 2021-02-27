@@ -53,7 +53,7 @@ store = {
 #         подсчет количества товара
 #         подсчет стоимости товара
 #     вывод на консоль количества и стоимости товара на складе
-# TODO Используйте .items() - это удобно и нужные данные сразу попадают в переменные цикла
+#  Используйте .items() - это удобно и нужные данные сразу попадают в переменные цикла
 #  for name, code in goods.items():
 for product in goods:
     product_total_quantity = 0
@@ -63,3 +63,16 @@ for product in goods:
         product_total_quantity += item['quantity']
         product_total_cost += item['quantity'] * item['price']
     print(f'{product} - {product_total_quantity} шт, стоимость {product_total_cost} руб')
+
+print()
+
+# TODO использовал .items()
+
+for product_name, product_code in goods.items():
+    product_total_quantity = 0
+    product_total_cost = 0
+    product_list = store[product_code]
+    for item in product_list:
+        product_total_quantity += item['quantity']
+        product_total_cost += item['quantity'] * item['price']
+    print(f'{product_name} - {product_total_quantity} шт, стоимость {product_total_cost} руб')
