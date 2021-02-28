@@ -119,3 +119,5 @@ for y in range(0, sd.resolution[1] + 1, BRICK_SIZE.y):
 #           рисуем кирпич
 
 sd.pause()
+
+# зачет!
