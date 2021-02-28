@@ -71,8 +71,12 @@ print()
 for product_name, product_code in goods.items():
     product_total_quantity = 0
     product_total_cost = 0
+    # TODO Переменную создавать необязательно, можно сразу итерироваться.
+    #  for item in store[product_code]
     product_list = store[product_code]
     for item in product_list:
         product_total_quantity += item['quantity']
         product_total_cost += item['quantity'] * item['price']
     print(f'{product_name} - {product_total_quantity} шт, стоимость {product_total_cost} руб')
+
+# зачет!

@@ -43,3 +43,5 @@ if month in calendar:
     print(calendar[month])
 else:
     print('Такого месяца не существует')
+
+# зачет!
