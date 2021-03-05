@@ -26,7 +26,49 @@ import simple_draw as sd
 
 # можно поиграть -шрифтами- цветами и углами отклонения
 
-# TODO здесь ваш код
+
+def draw_branches(start_point, angle, length):
+    if length < 10:
+        return
+    v1 = sd.get_vector(start_point=start_point, angle=angle - 30, length=length, width=1)
+    v1.draw()
+    v2 = sd.get_vector(start_point=start_point, angle=angle + 30, length=length, width=1)
+    v2.draw()
+    next_point_1 = v1.end_point
+    next_point_2 = v2.end_point
+    next_angle_1 = angle - 30
+    next_angle_2 = angle + 30
+    next_length = length * .75
+    draw_branches(start_point=next_point_1, angle=next_angle_1, length=next_length)
+    draw_branches(start_point=next_point_2, angle=next_angle_2, length=next_length)
+
+
+def draw_branches_random(start_point, angle, length):
+    if length < 6:
+        return
+    branch_rejection = sd.random_number(18, 42)
+    v1 = sd.get_vector(start_point=start_point, angle=angle - branch_rejection, length=length, width=1)
+    # v1.draw()
+    v1.draw(color=sd.random_color())
+    v2 = sd.get_vector(start_point=start_point, angle=angle + branch_rejection, length=length, width=1)
+    # v2.draw()
+    v2.draw(color=sd.random_color())
+    next_point_1 = v1.end_point
+    next_point_2 = v2.end_point
+    next_angle_1 = angle - branch_rejection
+    next_angle_2 = angle + branch_rejection
+    next_length = length * sd.random_number(60, 90) / 100
+    draw_branches_random(start_point=next_point_1, angle=next_angle_1, length=next_length)
+    draw_branches_random(start_point=next_point_2, angle=next_angle_2, length=next_length)
+
+
+sd.resolution = (800, 600)
+
+root_point = sd.get_point(400, 50)
+point_0 = sd.get_point(400, 0)
+
+sd.line(point_0, root_point, width=2)
+draw_branches(start_point=root_point, angle=90, length=100)
 
 # 4) Усложненное задание (делать по желанию)
 # - сделать рандомное отклонение угла ветвей в пределах 40% от 30-ти градусов
@@ -35,5 +77,11 @@ import simple_draw as sd
 
 # Пригодятся функции
 # sd.random_number()
+
+# sd.sleep(seconds=3)
+sd.clear_screen()
+
+sd.line(point_0, root_point, width=2)
+draw_branches_random(start_point=root_point, angle=90, length=100)
 
 sd.pause()
