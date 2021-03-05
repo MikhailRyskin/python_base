@@ -85,3 +85,5 @@ sd.line(point_0, root_point, width=2)
 draw_branches_random(start_point=root_point, angle=90, length=100)
 
 sd.pause()
+
+# зачет!
