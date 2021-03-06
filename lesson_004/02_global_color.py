@@ -116,3 +116,5 @@ point_04 = sd.get_point(1100, 200)
 hexagon(point=point_04, angle=70, length=120, color=choice_color)
 
 sd.pause()
+
+# зачет!
