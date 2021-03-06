@@ -23,17 +23,17 @@ x_list = [x for x in range(0, 1001, 50)]
 y_list = [sd.random_number(500, 800) for _ in range(N)]
 beam_length = [sd.random_number(10, 40) for _ in range(N)]
 
-while True:
-    sd.clear_screen()
-    for ind in range(N):
-        point = sd.get_point(x_list[ind], y_list[ind])
-        sd.snowflake(center=point, length=beam_length[ind])
-        y_list[ind] -= 10
-        x_list[ind] += 5
-    sd.sleep(0.1)
-    if sd.user_want_exit():
-        break
-sd.pause()
+# while True:
+#     sd.clear_screen()
+#     for ind in range(N):
+#         point = sd.get_point(x_list[ind], y_list[ind])
+#         sd.snowflake(center=point, length=beam_length[ind])
+#         y_list[ind] -= 10
+#         x_list[ind] += 5
+#     sd.sleep(0.1)
+#     if sd.user_want_exit():
+#         break
+
 
 # Примерный алгоритм отрисовки снежинок
 #   навсегда
@@ -81,3 +81,20 @@ sd.pause()
 # - сделать сугоб внизу экрана - если снежинка долетает до низа, оставлять её там,
 #   и добавлять новую снежинку
 # Результат решения см https://youtu.be/XBx0JtxHiLg
+
+while True:
+    sd.start_drawing()
+    for ind in range(N):
+        point = sd.get_point(x_list[ind], y_list[ind])
+        if point.y > 30:
+            sd.snowflake(center=point, length=beam_length[ind], color=sd.background_color)
+        y_list[ind] -= 10
+        x_list[ind] += sd.random_number(-5, 10)
+        point = sd.get_point(x_list[ind], y_list[ind])
+        sd.snowflake(center=point, length=beam_length[ind])
+    sd.finish_drawing()
+    sd.sleep(0.1)
+    if sd.user_want_exit():
+        break
+
+sd.pause()
