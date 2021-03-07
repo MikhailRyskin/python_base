@@ -165,6 +165,7 @@ def polygon(start_point, number_sides, angle, side_length):
         v = sd.get_vector(start_point=start_point, angle=vector_angle, length=side_length, width=3)
         v.draw()
         start_point = v.end_point
+    # TODO Здесь лучше использовать параметр функции - start_point
     sd.line(v.end_point, start_point_0, color=sd.COLOR_ORANGE, width=5)
 
 
@@ -198,3 +199,5 @@ hexagon(point=point_04, angle=30, length=100)
 
 
 sd.pause()
+
+# зачет!
