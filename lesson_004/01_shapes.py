@@ -103,17 +103,17 @@ SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 600
 sd.resolution = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
-point_01 = sd.get_point(150, 200)
-triangle_0(point=point_01, angle=45, length=180)
-
-point_02 = sd.get_point(400, 200)
-square_0(point=point_02, angle=15, length=150)
-
-point_03 = sd.get_point(700, 200)
-pentagon_0(point=point_03, angle=30, length=100)
-
-point_04 = sd.get_point(900, 200)
-hexagon_0(point=point_04, angle=0, length=150)
+# point_01 = sd.get_point(150, 200)
+# triangle_0(point=point_01, angle=45, length=180)
+#
+# point_02 = sd.get_point(400, 200)
+# square_0(point=point_02, angle=15, length=150)
+#
+# point_03 = sd.get_point(700, 200)
+# pentagon_0(point=point_03, angle=30, length=100)
+#
+# point_04 = sd.get_point(900, 200)
+# hexagon_0(point=point_04, angle=0, length=150)
 
 # sd.pause()
 
@@ -146,7 +146,7 @@ sd.clear_screen()
 
 
 def polygon(start_point, number_sides, angle, side_length):
-    # TODO Угол для векторов нужно рассчитать, а если нужно будет восьмиугольник?
+    #  Угол для векторов нужно рассчитать, а если нужно будет восьмиугольник?
     #  будете править код получается добавлять еще условия
     #  .
     #  Угол для рисования векторов нужно вычислить.
@@ -159,23 +159,13 @@ def polygon(start_point, number_sides, angle, side_length):
     #  Конец цикла в 360, но опять же нужно прибавить к 360 параметр угла - 360 + angle
     #  Шаг для цикла мы рассчитали заранее, в переменной значения угла
     #  Остается только нарисовать вектора.
-    inner_corner = 0
-    if number_sides == 3:
-        inner_corner = 120
-    elif number_sides == 4:
-        inner_corner = 90
-    elif number_sides == 5:
-        inner_corner = 72
-    elif number_sides == 6:
-        inner_corner = 60
+    #
     start_point_0 = start_point
-    for side_number in range(number_sides):
-        v = sd.get_vector(start_point=start_point, angle=angle + side_number * inner_corner,
-                          length=side_length, width=3)
+    for vector_angle in range(angle, angle + 360, 360 // number_sides):
+        v = sd.get_vector(start_point=start_point, angle=vector_angle, length=side_length, width=3)
         v.draw()
         start_point = v.end_point
-        if side_number == number_sides - 1:
-            sd.line(start_point, start_point_0, color=sd.COLOR_ORANGE, width=5)
+    sd.line(v.end_point, start_point_0, color=sd.COLOR_ORANGE, width=5)
 
 
 def triangle(point, angle=0, length=200):
@@ -195,16 +185,16 @@ def hexagon(point, angle=0, length=200):
 
 
 point_01 = sd.get_point(150, 200)
-triangle(point=point_01, angle=20, length=180)
+triangle(point=point_01, angle=15, length=200)
 
 point_02 = sd.get_point(450, 200)
-square(point=point_02, angle=35, length=150)
+square(point=point_02, angle=30, length=150)
 
 point_03 = sd.get_point(700, 200)
-pentagon(point=point_03, angle=10, length=80)
+pentagon(point=point_03, angle=25, length=80)
 
-point_04 = sd.get_point(900, 200)
-hexagon(point=point_04, angle=0, length=150)
+point_04 = sd.get_point(950, 200)
+hexagon(point=point_04, angle=30, length=100)
 
 
 sd.pause()
