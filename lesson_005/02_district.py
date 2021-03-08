@@ -5,4 +5,19 @@
 # подсказка: для вывода элементов списка через запятую можно использовать функцию строки .join()
 # https://docs.python.org/3/library/stdtypes.html#str.join
 
-# TODO здесь ваш код
+from district.central_street.house1.room1 import folks as room_01
+from district.central_street.house1.room2 import folks as room_02
+from district.central_street.house2.room1 import folks as room_03
+from district.central_street.house2.room2 import folks as room_04
+from district.soviet_street.house1.room1 import folks as room_05
+from district.soviet_street.house1.room2 import folks as room_06
+from district.soviet_street.house2.room1 import folks as room_07
+from district.soviet_street.house2.room2 import folks as room_08
+
+rooms_list = [room_01, room_02, room_03, room_04, room_05, room_06, room_07, room_08]
+total_folks = []
+for folks in rooms_list:
+    for folk in folks:
+        total_folks.append(folk)
+
+print(', '.join(total_folks))

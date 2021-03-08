@@ -18,7 +18,26 @@
 # пример см. lesson_005/results/04_painting.jpg
 # Приправить своей фантазией по вкусу (коты? коровы? люди? трактор? что придумается)
 
-# TODO здесь ваш код
+#  здесь ваш код
+import simple_draw as sd
+from village_morning.weather_events import snowfall
+from village_morning.weather_events import rainbow
+from village_morning.weather_events import sun
+from village_morning.buildings import building
+from village_morning.live_nature import tree
+from village_morning.live_nature import human
+
+
+sd.resolution = (1200, 600)
+
+sun()
+tree()
+building()
+human()
+snowfall()
+rainbow()
+
+sd.pause()
 
 # Усложненное задание (делать по желанию)
 # Анимировать картину.
