@@ -20,3 +20,5 @@ print('В комнате room_1 живут:', *folks_room_1)
 
 # print('В комнате room_2 живут:', *room_2.folks)
 print('В комнате room_2 живут:', *folks)
+
+# зачет!

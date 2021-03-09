@@ -41,3 +41,5 @@ def my_choice_burger():
 double_cheeseburger()
 print()
 my_choice_burger()
+
+# зачет!
