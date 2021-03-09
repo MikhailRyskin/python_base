@@ -20,23 +20,26 @@
 
 #  здесь ваш код
 import simple_draw as sd
-from village_morning.weather_events import snowfall
-from village_morning.weather_events import rainbow
-from village_morning.weather_events import sun
+from village_morning.weather_events import snowfall, rainbow, sun
 from village_morning.buildings import building
-from village_morning.live_nature import tree
-from village_morning.live_nature import human
+from village_morning.live_nature import tree, human
 
 
 sd.resolution = (1200, 600)
-# TODO Используйте sd.start_drawing() и sd.finish_drawing() чтобы отрисовать всю картину одновременно.
+#  Используйте sd.start_drawing() и sd.finish_drawing() чтобы отрисовать всю картину одновременно.
 #  Анимированные объекты лучше вызывать после статичных
+# TODO использовал. Сделал снег последним. Просто радуга обычно появляется после дождя или снега :)
+sd.start_drawing()
+
 sun()
 tree()
 building()
 human()
-snowfall()
 rainbow()
+
+sd.finish_drawing()
+
+snowfall()
 
 sd.pause()
 
