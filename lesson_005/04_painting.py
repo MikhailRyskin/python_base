@@ -29,7 +29,8 @@ from village_morning.live_nature import human
 
 
 sd.resolution = (1200, 600)
-
+# TODO Используйте sd.start_drawing() и sd.finish_drawing() чтобы отрисовать всю картину одновременно.
+#  Анимированные объекты лучше вызывать после статичных
 sun()
 tree()
 building()
