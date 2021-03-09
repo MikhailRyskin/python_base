@@ -15,7 +15,7 @@ from district.soviet_street.house2.room1 import folks as room_07
 from district.soviet_street.house2.room2 import folks as room_08
 # Используйте простое сложение списков, тогда цикл вам будет не нужен .join все сделаем сам.
 #  residents = (room_1 + room_2 ...
-# TODO сделал сложение списков
+#  сделал сложение списков
 
 # rooms_list = [room_01, room_02, room_03, room_04, room_05, room_06, room_07, room_08]
 # total_folks = []
@@ -25,3 +25,5 @@ from district.soviet_street.house2.room2 import folks as room_08
 
 total_folks =(room_01 + room_02 + room_03 + room_04 + room_05 + room_06 + room_07 + room_08)
 print(', '.join(total_folks))
+
+# зачет!
