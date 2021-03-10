@@ -1,6 +1,6 @@
 import random
 
-
+# TODO Для генерации числа удобнее использовать random.sample
 def get_hidden_number():
     global _hidden_number
     _hidden_number = []
@@ -27,6 +27,7 @@ def checking_number(number):
 def number_bulls_cows(number):
     global _hidden_number
     bulls_cows = {'bulls': 0, 'cows': 0}
+    # TODO range - len это плохой стиль, для индексов всегда стоит использовать "enumerate"
     for position in range(len(number)):
         if number[position] in _hidden_number:
             if number[position] == _hidden_number[position]:
@@ -35,5 +36,5 @@ def number_bulls_cows(number):
                 bulls_cows['cows'] += 1
     return bulls_cows
 
-
+# TODO Принято определять в начале модуля
 _hidden_number = []

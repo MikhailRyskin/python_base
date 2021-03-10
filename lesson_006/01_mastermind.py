@@ -48,6 +48,11 @@ from termcolor import cprint, colored
 from mastermind_engine import get_hidden_number, checking_number, number_bulls_cows
 
 
+# TODO Довольно много циклов, достаточно двух
+#  1) С генерацией числа
+#  2) Получением и подсчетом быков и коров
+#  .
+#  Цикл для проверки ввода пользователя лучше перенести в функцию
 while True:
     get_hidden_number()
     print('\nЗагадано 4-х значное число (все цифры разные, не начинается с 0)')

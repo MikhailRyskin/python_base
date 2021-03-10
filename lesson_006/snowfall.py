@@ -1,12 +1,14 @@
 import simple_draw as sd
 
-
+# TODO Не проще ли хранить координаты в одном списке списков?
 x_snowflakes = []
 y_snowflakes = []
 off_screen_flakes = []
 
 
 def get_snowflakes(number=10):
+    # TODO global поддерживает перечисление через запятую
+    #  global x_snowflakes, y_snowflakes
     global x_snowflakes
     global y_snowflakes
     x_new_list = [sd.random_number(20, sd.resolution[0] - 20) for _ in range(number)]
@@ -14,7 +16,8 @@ def get_snowflakes(number=10):
     x_snowflakes += x_new_list
     y_snowflakes += y_new_list
 
-
+# TODO "range - len" нужно убрать
+#  Стоит запомнить - если вы написали range(len(list)  - вы что-то делаете не так
 def draw_snowflakes(color):
     global x_snowflakes
     global y_snowflakes
@@ -54,5 +57,6 @@ def removing_snowflakes():
         del x_snowflakes[index]
         del y_snowflakes[index]
         need_new_flakes += 1
+    # TODO Для очистки списка используйте .clear()
     off_screen_flakes = []
     return need_new_flakes
