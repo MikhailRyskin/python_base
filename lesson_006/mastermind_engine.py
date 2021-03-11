@@ -1,6 +1,16 @@
 import random
 
-# TODO Для генерации числа удобнее использовать random.sample
+
+#  Принято определять в начале модуля
+# TODO определил в начале
+_hidden_number = []
+
+
+#  Для генерации числа удобнее использовать random.sample
+# TODO чем в данном случае random.sample лучше random.choice?
+#  choice - случайный элемент из существующего набора данных. Ровно то, что нам нужно
+#  sample - новый список из случайных компонентов уже существующего списка. Зачем нам здесь список из 1 элемента?
+
 def get_hidden_number():
     global _hidden_number
     _hidden_number = []
@@ -27,14 +37,18 @@ def checking_number(number):
 def number_bulls_cows(number):
     global _hidden_number
     bulls_cows = {'bulls': 0, 'cows': 0}
-    # TODO range - len это плохой стиль, для индексов всегда стоит использовать "enumerate"
-    for position in range(len(number)):
-        if number[position] in _hidden_number:
-            if number[position] == _hidden_number[position]:
+    #  range - len это плохой стиль, для индексов всегда стоит использовать "enumerate"
+    # for position in range(len(number)):
+    #     if number[position] in _hidden_number:
+    #         if number[position] == _hidden_number[position]:
+    #             bulls_cows['bulls'] += 1
+    #         else:
+    #             bulls_cows['cows'] += 1
+    # TODO исправил
+    for position, digit in enumerate(number):
+        if digit in _hidden_number:
+            if digit == _hidden_number[position]:
                 bulls_cows['bulls'] += 1
             else:
                 bulls_cows['cows'] += 1
     return bulls_cows
-
-# TODO Принято определять в начале модуля
-_hidden_number = []
