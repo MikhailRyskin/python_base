@@ -21,7 +21,7 @@ from snowfall import get_snowflakes, draw_snowflakes, shift_snowflakes, off_scre
 sd.resolution = (1200, 600)
 
 # создать_снежинки(N)
-number_snowflakes = 20
+number_snowflakes = 100
 
 get_snowflakes(number_snowflakes)
 while True:

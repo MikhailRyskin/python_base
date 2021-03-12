@@ -44,10 +44,6 @@
 # Это пример применения SOLID принципа (см https://goo.gl/GFMoaI) в архитектуре программ.
 # Точнее, в этом случае важен принцип единственной ответственности - https://goo.gl/rYb3hT
 
-from termcolor import cprint, colored
-from mastermind_engine import get_hidden_number, checking_number, number_bulls_cows
-
-
 #  Довольно много циклов, достаточно двух
 #  1) С генерацией числа
 #  2) Получением и подсчетом быков и коров
@@ -57,23 +53,42 @@ from mastermind_engine import get_hidden_number, checking_number, number_bulls_c
 #  "В текущем модуле...  проверяем, что пользователь ввел допустимое число... "
 #  "При написании кода учитывайте, что движок игры никак не должен взаимодействовать с пользователем."
 #  при проверке ввода в функции как раз и будет взаимодействие с пользователем из движка.
-# TODO Да, верно забыл добавить, что функцию по проверке нужно перенести сюда в основной модуль.
-#  т.к диапазон в "sample" генерирует числовой список, то пользовательский ввод можн осразу привести к списку из чисел
+#  Да, верно забыл добавить, что функцию по проверке нужно перенести сюда в основной модуль.
+#  т.к диапазон в "sample" генерирует числовой список, то пользовательский ввод можно сразу привести к списку из чисел
 #  Упростить это поможет функция map()
 #  Функция map применяет функцию к каждому элементу последовательности и возвращает итератор с результатами.
 #  digits = '1234'
 #  list(map(int, digits)) - вернет список из чисел [1, 2, 3, 4]
+# TODO один цикл убрал, функцию контроля ввода перенёс в этот модуль, ввод преобразовал в список.
+
+from termcolor import cprint, colored
+from mastermind_engine import get_hidden_number, number_bulls_cows
+
+
+def checking_number(number):
+    if len(number) != 4 or not number.isdigit() or number[0] == '0' or len(set(number)) < 4:
+        return False
+    else:
+        return True
+
+
+def request_user_input():
+    while True:
+        user_input = input('Введите ваше число (все цифры разные, не начинается с 0): ')
+        if checking_number(user_input):
+            break
+        else:
+            cprint('Вы ввели недопустимое число! ', color='red', on_color='on_cyan')
+    user_number = list(map(int, user_input))
+    return user_number
+
+
 while True:
     get_hidden_number()
     print('\nЗагадано 4-х значное число (все цифры разные, не начинается с 0)')
     number_attempts = 0
     while True:
-        while True:
-            number_to_check = input('Введите ваше число (все цифры разные, не начинается с 0): ')
-            if checking_number(number_to_check):
-                break
-            else:
-                cprint('Вы ввели недопустимое число! ', color='red', on_color='on_cyan')
+        number_to_check = request_user_input()
         bulls_cows = number_bulls_cows(number_to_check)
         print('В вашем числе быков: {bulls}, коров: {cows} '.format(bulls=bulls_cows['bulls'], cows=bulls_cows['cows']))
         number_attempts += 1
