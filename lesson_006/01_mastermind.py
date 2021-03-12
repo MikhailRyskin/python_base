@@ -100,3 +100,5 @@ while True:
     if new_game != '1':
         break
 cprint('\nИгра окончена.', color='red', attrs=['bold', 'underline'])
+
+# зачет!
