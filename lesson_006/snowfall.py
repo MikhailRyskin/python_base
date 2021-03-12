@@ -1,9 +1,26 @@
 import simple_draw as sd
 
 #  Не проще ли хранить координаты в одном списке списков?
-# TODO мы делали этот модуль на основе прошлых. Там были разные списки.
+#  мы делали этот модуль на основе прошлых. Там были разные списки.
 #  Для меня в этом есть логика. Мы работаем только с y: он меняется, выходит за экран, x не меняется.
 #  Надо переделать все работающие функции. Мне кажется, проще оставить как есть.
+#  TODO Если вам так удобнее, то ваше право, но гораздо удобнее работать с общей структурой
+#   потому что снежинки обычно не падают ровно вниз, соответственно изменять придется и координаты "х"
+#   Например:
+#   _snowflakes_coords = []
+#   .
+#   def create_snow(n):
+#       global _snowflakes_coords
+#       for c in range(n):
+#           x = sd.random_number(0, sd.resolution[0])
+#           y = sd.random_number(sd.resolution[1], sd.resolution[1] * 2)
+#           _snowflakes_coords.append([x, y, ])
+#   .
+#   def move_snow():
+#      global _snowflakes_coords
+#      for snow in _snowflakes_coords:
+#          snow[1] -= sd.random_number(5, 8)
+#          snow[0] += sd.random_number(-2, 2)
 x_snowflakes = []
 y_snowflakes = []
 off_screen_flakes = []
@@ -22,14 +39,14 @@ def get_snowflakes(number=10):
 
 # "range - len" нужно убрать
 #  Стоит запомнить - если вы написали range(len(list)  - вы что-то делаете не так
-# TODO исправил
+#  исправил
 def draw_snowflakes(color):
     global x_snowflakes, y_snowflakes
     for ind, x_flake in enumerate(x_snowflakes):
         point = sd.get_point(x_flake, y_snowflakes[ind])
         sd.snowflake(center=point, length=20, color=color)
 
-
+# TODO в этих функциях также стоит поправить
 def shift_snowflakes():
     global x_snowflakes, y_snowflakes
     for ind in range(len(x_snowflakes)):
