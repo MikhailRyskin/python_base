@@ -20,7 +20,7 @@
 #      for snow in _snowflakes_coords:
 #          snow[1] -= sd.random_number(5, 8)
 #          snow[0] += sd.random_number(-2, 2)
-# TODO переделал на список списков. Да, так, конечно, логичней и удобней.
+#  переделал на список списков. Да, так, конечно, логичней и удобней.
 
 import simple_draw as sd
 
