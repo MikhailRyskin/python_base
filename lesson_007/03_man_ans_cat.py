@@ -35,6 +35,7 @@ class Man:
         self.name = name
         self.fullness = 50
         self.house = None
+        self.my_cat = None
 
     def __str__(self):
         return 'Я - {}, сытость {}'.format(
@@ -85,9 +86,11 @@ class Man:
         cprint('{} въехал в дом'.format(self.name), color='cyan')
 
     def pick_up_cat(self, cat, house):
-        # TODO КОгда человек берет кота он должен привязать его к себе.
+        # Когда человек берет кота он должен привязать его к себе.
+        # TODO  у человека появился кот, у кота - дом
+        self.my_cat = cat
         cat.house = house
-        cprint('Кот появился в доме', color='cyan')
+        cprint('{} подобрал кота '.format(self.name), color='cyan')
 
     def act(self):
         if self.fullness <= 0:
@@ -113,7 +116,8 @@ class Man:
 
 
 class Cat:
-    # TODO В дом лучше добавить список жителей
+    #  В дом лучше добавить список жителей
+    # TODO заселил в дом троих
     def __init__(self):
         self.fullness = 50
         self.house = None
@@ -165,18 +169,27 @@ class House:
         )
 
 
-petya = Man(name='Петя')
-barsik = Cat()
+citizens = [
+    Man(name='Петя'),
+    Man(name='Вася'),
+    Man(name='Коля'),
+]
+
 my_sweet_home = House()
-petya.go_to_the_house(house=my_sweet_home)
-petya.pick_up_cat(cat=barsik, house=my_sweet_home)
+for citizen in citizens:
+    citizen.go_to_the_house(house=my_sweet_home)
+
+barsik = Cat()
+citizens[0].pick_up_cat(cat=barsik, house=my_sweet_home)
 
 for day in range(1, 366):
     print('================ день {} =================='.format(day))
-    petya.act()
+    for citizen in citizens:
+        citizen.act()
     barsik.cat_act()
     print('--- в конце дня ---')
-    print(petya)
+    for citizen in citizens:
+        print(citizen)
     print(barsik)
     print(my_sweet_home)
 

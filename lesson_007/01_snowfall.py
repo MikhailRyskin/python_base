@@ -28,7 +28,6 @@ class Snowflake:
 
     def clear_previous_picture(self):
         sd.snowflake(center=self.point, length=self.length, color=sd.background_color)
-        # sd.clear_screen()
 
     def can_fall(self):
         if self.y > -20:
@@ -61,52 +60,70 @@ while True:
 #     sd.sleep(0.1)
 #     if sd.user_want_exit():
 #         break
-flakes = []
-fallen_flakes = []
 
-# TODO В функциях не стоит использовать "global" - это плохая практика старайтесь этого избегать
+
+#  В функциях не стоит использовать "global" - это плохая практика старайтесь этого избегать
+# def get_flakes(count=10):
+#     new_flakes = []
+#     #  Создайте список здесь и верните уже наполненный снежинками
+#     for _ in range(count):
+#         #  Промежуточная переменная ни к чму сразу добавляйте объект
+#         #  К тому же у вас имея с переменной цикла идентичное
+#         new_flakes.append(Snowflake())
+#     return new_flakes
+
+
+# def get_fallen_flakes():
+#     global flakes, fallen_flakes
+#     count_fallen_flakes = 0
+#     for ind, flake in enumerate(flakes):
+#         if not flake.can_fall():
+#             fallen_flakes.append(ind)
+#             count_fallen_flakes += 1
+#     return count_fallen_flakes
+
+# Если эта функция для удаления так и назовите функция только удаляет не добавляя новых,
+#  для добавления новых лучше расширять(extend) список снежинок  по количеству упавших
+# def append_flakes(count):
+#     global flakes, fallen_flakes
+#     #  Удалять лучше с конца
+#     for ind in fallen_flakes:
+#         del flakes[ind]
+#     fallen_flakes.clear()
+#     get_flakes(count=count)
+
+# TODO убрал global из функций, сделал общую функцию для добавления вместо упавших
+
 def get_flakes(count=10):
-    # TODO Создайте список здесь и верните уже наполненный снежинками
-    global flakes
-    for flake in range(count):
-        # TODO Промежуточная переменная ни к чму сразу добавляйте объект
-        #  К тому же у вас имея с переменной цикла идентичное
-        flake = Snowflake()
-        flakes.append(flake)
+    new_flakes = []
+    for _ in range(count):
+        new_flakes.append(Snowflake())
+    return new_flakes
 
 
-def get_fallen_flakes():
-    global flakes, fallen_flakes
+def append_instead_fallen(flakes_list):
     count_fallen_flakes = 0
-    for ind, flake in enumerate(flakes):
-        if not flake.can_fall():
+    fallen_flakes = []
+    for ind, snowflake in enumerate(flakes_list):
+        if not snowflake.can_fall():
             fallen_flakes.append(ind)
             count_fallen_flakes += 1
-    return count_fallen_flakes
-
-# TODO Если эта функция для удаления так и назовите функция только удаляет не добавляя новых,
-#  для добавления новых лучше расширять(extend) список снежинок  по количеству упавших
-def append_flakes(count):
-    global flakes, fallen_flakes
-    # TODO Удалять лучше с конца
-    for ind in fallen_flakes:
-        del flakes[ind]
-    fallen_flakes.clear()
-    get_flakes(count=count)
+    if count_fallen_flakes:
+        for ind in fallen_flakes:
+            del flakes_list[ind]
+        for _ in range(count_fallen_flakes):
+            flakes_list.append(Snowflake())
+    return flakes_list
 
 
-get_flakes(count=20)
+flakes = get_flakes(count=10)
 
 while True:
-    print(len(flakes))
     for flake in flakes:
         flake.clear_previous_picture()
         flake.move()
         flake.draw()
-    count_fallen_flakes = get_fallen_flakes()  # подчитать сколько снежинок уже упало
-    if count_fallen_flakes:
-        append_flakes(count=count_fallen_flakes)  # добавить еще сверху
-
+    flakes = append_instead_fallen(flakes)
     sd.sleep(0.1)
     if sd.user_want_exit():
         break
