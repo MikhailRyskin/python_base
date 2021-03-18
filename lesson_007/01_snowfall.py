@@ -64,10 +64,13 @@ while True:
 flakes = []
 fallen_flakes = []
 
-
+# TODO В функциях не стоит использовать "global" - это плохая практика старайтесь этого избегать
 def get_flakes(count=10):
+    # TODO Создайте список здесь и верните уже наполненный снежинками
     global flakes
     for flake in range(count):
+        # TODO Промежуточная переменная ни к чму сразу добавляйте объект
+        #  К тому же у вас имея с переменной цикла идентичное
         flake = Snowflake()
         flakes.append(flake)
 
@@ -81,9 +84,11 @@ def get_fallen_flakes():
             count_fallen_flakes += 1
     return count_fallen_flakes
 
-
+# TODO Если эта функция для удаления так и назовите функция только удаляет не добавляя новых,
+#  для добавления новых лучше расширять(extend) список снежинок  по количеству упавших
 def append_flakes(count):
     global flakes, fallen_flakes
+    # TODO Удалять лучше с конца
     for ind in fallen_flakes:
         del flakes[ind]
     fallen_flakes.clear()
@@ -93,6 +98,7 @@ def append_flakes(count):
 get_flakes(count=20)
 
 while True:
+    print(len(flakes))
     for flake in flakes:
         flake.clear_previous_picture()
         flake.move()

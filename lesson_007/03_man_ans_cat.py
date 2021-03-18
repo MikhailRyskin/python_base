@@ -85,6 +85,7 @@ class Man:
         cprint('{} въехал в дом'.format(self.name), color='cyan')
 
     def pick_up_cat(self, cat, house):
+        # TODO КОгда человек берет кота он должен привязать его к себе.
         cat.house = house
         cprint('Кот появился в доме', color='cyan')
 
@@ -112,7 +113,7 @@ class Man:
 
 
 class Cat:
-
+    # TODO В дом лучше добавить список жителей
     def __init__(self):
         self.fullness = 50
         self.house = None
