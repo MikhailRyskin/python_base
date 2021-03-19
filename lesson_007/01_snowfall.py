@@ -92,7 +92,7 @@ while True:
 #     fallen_flakes.clear()
 #     get_flakes(count=count)
 
-# TODO убрал global из функций, сделал общую функцию для добавления вместо упавших
+#  убрал global из функций, сделал общую функцию для добавления вместо упавших
 
 def get_flakes(count=10):
     new_flakes = []
@@ -119,11 +119,13 @@ def append_instead_fallen(flakes_list):
 flakes = get_flakes(count=10)
 
 while True:
+    sd.start_drawing()
     for flake in flakes:
         flake.clear_previous_picture()
         flake.move()
         flake.draw()
     flakes = append_instead_fallen(flakes)
+    sd.finish_drawing()
     sd.sleep(0.1)
     if sd.user_want_exit():
         break
