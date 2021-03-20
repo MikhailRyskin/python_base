@@ -60,28 +60,19 @@ class House:
             self.food, self.money, self.dirt
         )
 
-# TODO Так ли нужен этот класс? Думаю стоит его обледенить с классом человека
-class Living:
+# Так ли нужен этот класс? Думаю стоит его обледенить с классом человека
+
+
+class Man:
 
     def __init__(self, name):
         self.name = name
         self.fullness = 30
-
-    def __str__(self):
-        return '{}, сытость {}'.format(
-            self.name, self.fullness,
-        )
-
-
-class Man(Living):
-
-    def __init__(self, name):
-        super().__init__(name=name)
         self.happiness = 100
         self.house = None
 
     def __str__(self):
-        return super().__str__() + ' ,счастье {}'.format(self.happiness)
+        return '{}, сытость {}, счастье {}'.format(self.name, self.fullness, self.happiness)
 
     def eat(self):
         if self.house.food >= 30:
@@ -90,7 +81,8 @@ class Man(Living):
             self.house.food -= 30
             House.total_food_eaten += 30
         else:
-            # TODO Если еды нет, то голод также нужно отнять
+            #  Если еды нет, то голод также нужно отнять
+            self.fullness -= 10
             cprint('{} нет еды'.format(self.name), color='red')
 
     def go_to_the_house(self, house):
@@ -105,10 +97,7 @@ class Man(Living):
 
 
 class Husband(Man):
-    # TODO Если ничего не привносите,то переопределять метод не нужно
-    def __init__(self, name):
-        super().__init__(name=name)
-
+    # Если ничего не привносите,то переопределять метод не нужно
     def __str__(self):
         return 'Муж - ' + super().__str__()
 
@@ -142,10 +131,7 @@ class Husband(Man):
 
 
 class Wife(Man):
-    # TODO Если ничего не привносите,то переопределять метод не нужно
-    def __init__(self, name):
-        super().__init__(name=name)
-
+    #  Если ничего не привносите,то переопределять метод не нужно
     def __str__(self):
         return 'Жена - ' + super().__str__()
 
