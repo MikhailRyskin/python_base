@@ -57,7 +57,7 @@ class House:
         self.resident = []
 
     def __str__(self):
-        return 'В доме: еда - {}, деньги - {}, грязь - {}, кошачий корм {}'.format(
+        return 'В доме: еда  {}, деньги  {}, грязь  {}, кошачий корм {}'.format(
             self.food, self.money, self.dirt, self.cat_food
         )
 
@@ -130,14 +130,14 @@ class Husband(Man):
             self.gaming()
 
     def work(self):
+        self.fullness -= 10
         cprint('{} сходил на работу'.format(self.name), color='blue')
         self.house.money += 150
-        self.fullness -= 10
         House.total_money_earned += 150
 
     def gaming(self):
-        cprint('{} играл в "Танки" целый день'.format(self.name), color='green')
         self.fullness -= 10
+        cprint('{} играл в "Танки" целый день'.format(self.name), color='green')
         self.happiness += 10
 
 
@@ -151,7 +151,7 @@ class Wife(Man):
         if self.fullness <= 0 or self.happiness < 10:
             cprint('{} умер...'.format(self.name), color='red')
             return
-        dice = randint(1, 3)
+        dice = randint(1, 7)
         if self.fullness < 30:
             self.eat()
         elif self.house.food <= 60:
@@ -159,46 +159,47 @@ class Wife(Man):
         elif self.house.cat_food <= 20:
             self.buying_cat_food()
         elif dice == 1:
-            self.clean_house()
+            self.buy_fur_coat()
         elif dice == 2:
             self.petting_cat(self.house.house_cat)
         else:
-            self.buy_fur_coat()
+            self.clean_house()
 
     def shopping(self):
+        self.fullness -= 10
         if self.house.money >= 60:
             cprint('{} сходила в магазин за едой'.format(self.name), color='blue')
             self.house.money -= 60
             self.house.food += 60
-            self.fullness -= 10
         else:
             cprint('{} деньги кончились!'.format(self.name), color='red')
 
     def buying_cat_food(self):
+        self.fullness -= 10
         if self.house.money >= 20:
-            cprint('{} купил кошачий корм'.format(self.name), color='blue')
+            cprint('{} купила кошачий корм'.format(self.name), color='blue')
             self.house.money -= 20
             self.house.cat_food += 20
         else:
             cprint('{} деньги кончились!'.format(self.name), color='red')
 
     def buy_fur_coat(self):
+        self.fullness -= 10
         if self.house.money >= 350:
             cprint('{} купила шубу!!!'.format(self.name), color='cyan')
             self.house.money -= 350
-            self.fullness -= 10
             self.happiness += 60
             House.total_fur_coats += 1
         else:
             cprint('{} "Нет денег на шубу!"'.format(self.name), color='red')
 
     def clean_house(self):
+        self.fullness -= 20
         cprint('{} сделала уборку в доме'.format(self.name), color='blue')
         if self.house.dirt > 100:
             self.house.dirt -= 100
         else:
             self.house.dirt = 0
-        self.fullness -= 20
 
 
 class Cat:
@@ -209,7 +210,7 @@ class Cat:
         self.name = name
 
     def __str__(self):
-        return 'Кот {}, сытость {}'.format(self.name, self.fullness)
+        return 'Кот - {}, сытость {}'.format(self.name, self.fullness)
 
     def cat_eat(self):
         if self.house.cat_food >= 10:
@@ -218,6 +219,7 @@ class Cat:
             self.house.cat_food -= 10
         else:
             cprint('Нет кошачьей еды', color='red')
+            self.fullness -= 10
 
     def cat_sleep(self):
         cprint('Кот спал', color='yellow')
