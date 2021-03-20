@@ -60,7 +60,7 @@ class House:
             self.food, self.money, self.dirt
         )
 
-
+# TODO Так ли нужен этот класс? Думаю стоит его обледенить с классом человека
 class Living:
 
     def __init__(self, name):
@@ -90,6 +90,7 @@ class Man(Living):
             self.house.food -= 30
             House.total_food_eaten += 30
         else:
+            # TODO Если еды нет, то голод также нужно отнять
             cprint('{} нет еды'.format(self.name), color='red')
 
     def go_to_the_house(self, house):
@@ -104,7 +105,7 @@ class Man(Living):
 
 
 class Husband(Man):
-
+    # TODO Если ничего не привносите,то переопределять метод не нужно
     def __init__(self, name):
         super().__init__(name=name)
 
@@ -141,7 +142,7 @@ class Husband(Man):
 
 
 class Wife(Man):
-
+    # TODO Если ничего не привносите,то переопределять метод не нужно
     def __init__(self, name):
         super().__init__(name=name)
 
@@ -216,7 +217,7 @@ cprint('\nВсего съедено еды {}'.format(House.total_food_eaten), c
 cprint('Всего заработано денег {}'.format(House.total_money_earned), color='magenta')
 cprint('Всего куплено шуб {}'.format(House.total_fur_coats), color='magenta')
 
-
+# зачет 1 части!
 #  после реализации первой части - отдать на проверку учителю
 
 # ####################################################### Часть вторая
