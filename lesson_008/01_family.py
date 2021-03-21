@@ -52,15 +52,12 @@ class House:
         self.money = 100
         self.food = 50
         self.dirt = 0
-        # self.cat_food = 0
         self.resident = []
 
     def __str__(self):
         return 'В доме еды - {}, денег - {}, грязь - {}'.format(
             self.food, self.money, self.dirt
         )
-
-# Так ли нужен этот класс? Думаю стоит его обледенить с классом человека
 
 
 class Man:
@@ -74,14 +71,13 @@ class Man:
     def __str__(self):
         return '{}, сытость {}, счастье {}'.format(self.name, self.fullness, self.happiness)
 
-    def eat(self):
-        if self.house.food >= 30:
+    def eat(self, portion_food):
+        if self.house.food >= portion_food:
             cprint('{} - приём пищи'.format(self.name), color='green')
-            self.fullness += 30
-            self.house.food -= 30
-            House.total_food_eaten += 30
+            self.fullness += portion_food
+            self.house.food -= portion_food
+            House.total_food_eaten += portion_food
         else:
-            #  Если еды нет, то голод также нужно отнять
             self.fullness -= 10
             cprint('{} нет еды'.format(self.name), color='red')
 
@@ -97,7 +93,6 @@ class Man:
 
 
 class Husband(Man):
-    # Если ничего не привносите,то переопределять метод не нужно
     def __str__(self):
         return 'Муж - ' + super().__str__()
 
@@ -108,13 +103,13 @@ class Husband(Man):
             return
         dice = randint(1, 6)
         if self.fullness <= 20:
-            self.eat()
+            self.eat(30)
         elif self.house.money < 60:
             self.work()
         elif dice == 1:
             self.work()
         elif dice == 2:
-            self.eat()
+            self.eat(30)
         else:
             self.gaming()
 
@@ -131,7 +126,6 @@ class Husband(Man):
 
 
 class Wife(Man):
-    #  Если ничего не привносите,то переопределять метод не нужно
     def __str__(self):
         return 'Жена - ' + super().__str__()
 
@@ -140,15 +134,15 @@ class Wife(Man):
         if self.fullness <= 0 or self.happiness < 10:
             cprint('{} умер...'.format(self.name), color='red')
             return
-        dice = randint(1, 3)
+        dice = randint(1, 4)
         if self.fullness < 30:
-            self.eat()
+            self.eat(30)
         elif self.house.food <= 60:
             self.shopping()
         elif dice == 1:
-            self.clean_house()
-        else:
             self.buy_fur_coat()
+        else:
+            self.clean_house()
 
     def shopping(self):
         if self.house.money >= 60:
@@ -177,12 +171,43 @@ class Wife(Man):
             self.house.dirt = 0
         self.fullness -= 20
 
+    def __add__(self, other):
+        if isinstance(other, Husband):
+            cprint('{} и {} стали родителями! Надо придумать имя ребёнка.'.format(
+                self.name, other.name), color='cyan')
+            return Child(name=None)
+        else:
+            return None
+
+
+class Child(Man):
+
+    def __str__(self):
+        return 'Ребёнок - ' + super().__str__()
+
+    def act(self):
+        self.house.dirt += 5
+        if self.fullness <= 0:
+            cprint('{} умер...'.format(self.name), color='red')
+            return
+        if self.fullness < 15:
+            self.eat(10)
+        else:
+            self.sleep()
+
+    def sleep(self):
+        self.fullness -= 10
+        cprint('{} спал'.format(self.name), color='green')
+
 
 serge = Husband(name='Сережа')
 masha = Wife(name='Маша')
 my_sweet_home = House()
 serge.go_to_the_house(my_sweet_home)
 masha.go_to_the_house(my_sweet_home)
+kid = masha + serge
+kid.name = 'Петя'
+kid.go_to_the_house(my_sweet_home)
 
 print('В доме живут:')
 for roomer in my_sweet_home.resident:
@@ -278,7 +303,7 @@ cprint('Всего куплено шуб {}'.format(House.total_fur_coats), colo
 #         pass
 #
 
-# TODO после реализации второй части - отдать на проверку учителем две ветки
+# после реализации второй части - отдать на проверку учителем две ветки
 
 
 # ####################################################### Часть третья
