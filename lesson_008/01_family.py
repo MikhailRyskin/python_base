@@ -80,7 +80,6 @@ class Man:
             self.house.food -= portion_food
             House.total_food_eaten += portion_food
         else:
-            #  Если еды нет, то голод также нужно отнять
             self.fullness -= 10
             cprint('{} нет еды'.format(self.name), color='red')
 
@@ -121,12 +120,12 @@ class Husband(Man):
             self.eat(30)
         elif self.house.money < 60:
             self.work()
-        elif dice == 1:
-            self.work()
-        elif dice == 2:
-            self.eat(30)
-        else:
+        elif dice == 1 or dice == 2:
             self.gaming()
+        elif dice == 3:
+            self.petting_cat(self.house.house_cat)
+        else:
+            self.work()
 
     def work(self):
         self.fullness -= 10
@@ -135,8 +134,8 @@ class Husband(Man):
         House.total_money_earned += 150
 
     def gaming(self):
-        cprint('{} играл в "Танки" целый день'.format(self.name), color='green')
         self.fullness -= 10
+        cprint('{} играл в "Танки" целый день'.format(self.name), color='green')
         self.happiness += 10
 
 
@@ -150,55 +149,63 @@ class Wife(Man):
         if self.fullness <= 0 or self.happiness < 10:
             cprint('{} умер...'.format(self.name), color='red')
             return
-        dice = randint(1, 7)
+        dice = randint(1, 3)
         if self.fullness < 30:
             self.eat(30)
         elif self.house.food <= 60:
             self.shopping()
+        elif self.house.dirt > 100:
+            self.clean_house()
         elif self.house.cat_food <= 20:
             self.buying_cat_food()
         elif dice == 1:
             self.buy_fur_coat()
-        elif dice == 2:
-            self.petting_cat(self.house.house_cat)
         else:
-            self.clean_house()
+            self.petting_cat(self.house.house_cat)
 
     def shopping(self):
         self.fullness -= 10
-        if self.house.money >= 60:
+        if self.house.money >= 90:
             cprint('{} сходила в магазин за едой'.format(self.name), color='blue')
-            self.house.money -= 60
-            self.house.food += 60
+            self.house.money -= 90
+            self.house.food += 90
         else:
             cprint('{} деньги кончились!'.format(self.name), color='red')
 
     def buying_cat_food(self):
         self.fullness -= 10
-        if self.house.money >= 20:
+        if self.house.money >= 40:
             cprint('{} купила кошачий корм'.format(self.name), color='blue')
-            self.house.money -= 20
-            self.house.cat_food += 20
+            self.house.money -= 40
+            self.house.cat_food += 40
         else:
             cprint('{} деньги кончились!'.format(self.name), color='red')
 
     def buy_fur_coat(self):
         self.fullness -= 10
-        if self.house.money >= 350:
+        if self.house.money >= 450:
             cprint('{} купила шубу!!!'.format(self.name), color='cyan')
             self.house.money -= 350
-            self.fullness -= 10
             self.happiness += 60
             House.total_fur_coats += 1
         else:
             cprint('{} "Нет денег на шубу!"'.format(self.name), color='red')
 
     def clean_house(self):
+        self.fullness -= 20
         cprint('{} сделала уборку в доме'.format(self.name), color='blue')
         if self.house.dirt > 100:
             self.house.dirt -= 100
         else:
             self.house.dirt = 0
+
+    def __add__(self, other):
+        if isinstance(other, Husband):
+            cprint('{} и {} стали родителями! Надо придумать имя ребёнка.'.format(
+                self.name, other.name), color='cyan')
+            return Child(name=None)
+        else:
+            return None
 
 
 class Cat:
@@ -240,14 +247,6 @@ class Cat:
             self.tear_up_wallpaper()
         else:
             self.cat_sleep()
-
-    def __add__(self, other):
-        if isinstance(other, Husband):
-            cprint('{} и {} стали родителями! Надо придумать имя ребёнка.'.format(
-                self.name, other.name), color='cyan')
-            return Child(name=None)
-        else:
-            return None
 
 
 class Child(Man):
