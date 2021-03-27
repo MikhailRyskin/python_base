@@ -24,56 +24,80 @@
 #   и https://gitlab.skillbox.ru/vadim_shandrinov/python_base_snippets/snippets/4
 
 #
-print('Как выводить события: 1 по минутам, 2 по часам, 3 по дням, 4 по месяцу, 5 по году.')
-period = int(input('Введите период: '))
-right_border = 17
-if period == 2:
-    right_border = 14
-elif period == 3:
-    right_border = 11
-elif period == 4:
-    right_border = 8
-elif period == 5:
-    right_border = 5
+class LogParser:
+
+    def __init__(self, file_name, output_file, period):
+        self.file_in = file_name
+        self.file_out = output_file
+        self.period = period
+        self.right_border = 17
+        self.events_file = None
+        self.events_quantity = None
+
+    def _right_border_calc(self):
+        if self.period == 2:
+            self.right_border = 14
+        elif self.period == 3:
+            self.right_border = 11
+        elif self.period == 4:
+            self.right_border = 8
+        elif self.period == 5:
+            self.right_border = 5
+
+    def open_files(self):
+        self.events_file = open(self.file_in, 'r', encoding='utf8')
+        self.events_quantity = open(self.file_out, 'w+', encoding='utf8')
+
+    def parser_events(self):
+        first_line = True
+        not_changed = True
+        events_count = 0
+        prev_line = ''
+
+        def _write_content():
+            content = f'{prev_line}] {events_count}\n'
+            self.events_quantity.write(content)
+
+        def _count_init():
+            if line[:-1].endswith('NOK'):
+                count = 1
+            else:
+                count = 0
+            return count
+
+        self._right_border_calc()
+        for line in self.events_file:
+            current_line = line[:self.right_border]
+            if first_line:
+                first_line = False
+                prev_line = current_line
+                events_count = _count_init()
+                continue
+            if current_line == prev_line:
+                if line[:-1].endswith('NOK'):
+                    events_count += 1
+            else:
+                not_changed = False
+                _write_content()
+                prev_line = current_line
+                events_count = _count_init()
+        if not_changed:
+            _write_content()
+
+    def close_files(self):
+        self.events_file.close()
+        self.events_quantity.close()
+
 
 file_in = 'events.txt'
-events_file = open(file_in, 'r', encoding='utf8')
 file_out = 'out.txt'
-events_quantity = open(file_out, 'w+', encoding='utf8')
+print('Как выводить события: 1 по минутам, 2 по часам, 3 по дням, 4 по месяцу, 5 по году.')
+user_choice = int(input('Введите период вывода событий: '))
 
-first_line = True
-not_changed = True
-events_count = 0
-prev_line = ''
-
-for line in events_file:
-    current_line = line[:right_border]
-    if first_line:
-        first_line = False
-        prev_line = current_line
-        if line[:-1].endswith('NOK'):
-            events_count = 1
-        else:
-            events_count = 0
-        continue
-    if current_line == prev_line:
-        if line[:-1].endswith('NOK'):
-            events_count += 1
-    else:
-        not_changed = False
-        content = f'{prev_line}] {events_count}\n'
-        events_quantity.write(content)
-        prev_line = current_line
-        if line[:-1].endswith('NOK'):
-            events_count = 1
-        else:
-            events_count = 0
-if not_changed:
-    content = f'{prev_line}] {events_count}\n'
-    events_quantity.write(content)
-
-events_file.close()
-events_quantity.close()
+parser = LogParser(file_in, file_out, user_choice)
+parser.open_files()
+parser.parser_events()
+parser.close_files()
 
 # После зачета первого этапа нужно сделать группировку событий
 #  - по часам
