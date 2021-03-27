@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
-import time
-import shutil
-
 # Нужно написать скрипт для упорядочивания фотографий (вообще любых файлов)
 # Скрипт должен разложить файлы из одной папки по годам и месяцам в другую.
 # Например, так:
@@ -40,7 +36,36 @@ import shutil
 #   см https://refactoring.guru/ru/design-patterns/template-method
 #   и https://gitlab.skillbox.ru/vadim_shandrinov/python_base_snippets/snippets/4
 
-# TODO здесь ваш код
+import os
+import time
+import shutil
+
+
+input_dir = 'icons'
+output_dir = 'icons_by_year'
+
+abs_path = os.path.abspath(input_dir)
+total_files = 0
+for dirpath, dirnames, filenames in os.walk(abs_path):
+    total_files += len(filenames)
+    for file in filenames:
+        full_file_path = os.path.join(dirpath, file)
+        secs = os.path.getmtime(full_file_path)
+        file_time = time.gmtime(secs)
+        file_year = file_time[0]
+        file_month = file_time[1]
+        os.makedirs(name=f'{output_dir}/{file_year}/{file_month}', exist_ok=True)
+        shutil.copy2(full_file_path, f'{output_dir}/{file_year}/{file_month}')
+
+print('Абсолютный путь исходной папки', abs_path)
+print('Всего файлов в исходной папке', total_files)
+print()
+total_files_new = 0
+abs_path_new = os.path.abspath(output_dir)
+print('Абсолютный путь созданной папки', abs_path_new)
+for dirpath, dirnames, filenames in os.walk(abs_path_new):
+    total_files_new += len(filenames)
+print('Всего файлов в созданной папке', total_files)
 
 # Усложненное задание (делать по желанию)
 # Нужно обрабатывать zip-файл, содержащий фотографии, без предварительного извлечения файлов в папку.
