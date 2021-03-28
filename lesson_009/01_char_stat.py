@@ -37,6 +37,7 @@ class LettersStat:
         self.quantity_stat = {}
 
     def collect(self):
+        # TODO Открывать лучше с помощью "with", чтобы не заботится о закрытии файла
         file = open(self.file_name, 'r', encoding='cp1251')
         for line in file:
             for letter in line:
@@ -55,6 +56,10 @@ class LettersStat:
                 self.quantity_stat[quantity] = [letter]
 
     def output_stat(self):
+        # TODO Для красивого вывода есть модуль - tabulate
+        #  pip install tabulate
+        #  from tabulate import tabulate
+        #  попробуйте это удобно :)
         print('_' * 19)
         print(f'| буква | частота |')
         print('-' * 19)
@@ -89,3 +94,5 @@ stat_file.output_stat()
 #  - по частоте по возрастанию
 #  - по алфавиту по возрастанию
 #  - по алфавиту по убыванию
+
+# зачет!
