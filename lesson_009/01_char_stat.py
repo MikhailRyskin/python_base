@@ -27,6 +27,9 @@
 
 # здесь ваш код
 
+# from tabulate import tabulate
+
+
 class LettersStat:
     total_letters = 0
 
@@ -37,16 +40,16 @@ class LettersStat:
         self.quantity_stat = {}
 
     def collect(self):
-        # TODO Открывать лучше с помощью "with", чтобы не заботится о закрытии файла
-        file = open(self.file_name, 'r', encoding='cp1251')
-        for line in file:
-            for letter in line:
-                if letter.isalpha():
-                    if letter in self.letters_stat:
-                        self.letters_stat[letter] += 1
-                    else:
-                        self.letters_stat[letter] = 1
-        file.close()
+        # Открывать лучше с помощью "with", чтобы не заботится о закрытии файла
+        with open(self.file_name, 'r', encoding='cp1251') as file:
+            for line in file:
+                for letter in line:
+                    if letter.isalpha():
+                        self.total_letters += 1
+                        if letter in self.letters_stat:
+                            self.letters_stat[letter] += 1
+                        else:
+                            self.letters_stat[letter] = 1
 
     def _quantity_dict(self):
         for letter, quantity in self.letters_stat.items():
@@ -56,7 +59,7 @@ class LettersStat:
                 self.quantity_stat[quantity] = [letter]
 
     def output_stat(self):
-        # TODO Для красивого вывода есть модуль - tabulate
+        # Для красивого вывода есть модуль - tabulate
         #  pip install tabulate
         #  from tabulate import tabulate
         #  попробуйте это удобно :)
@@ -71,11 +74,15 @@ class LettersStat:
             for quantity in sorted(self.quantity_stat.keys(), reverse=revers):
                 for letter in self.quantity_stat[quantity]:
                     print(f'|{letter:^7}|{quantity:>8} |')
-                    self.total_letters += quantity
+            # print(tabulate(([self.quantity_stat[quantity], quantity]
+            #                 for quantity in sorted(self.quantity_stat.keys(), reverse=revers)),
+            #                ['буква', 'частота'], 'grid'))
         else:
             for letter in sorted(self.letters_stat.keys(), reverse=revers):
                 print(f'|{letter:^7}|{self.letters_stat[letter]:>8} |')
-                self.total_letters += self.letters_stat[letter]
+            # print(tabulate(([letter, self.letters_stat[letter]]
+            #            for letter in sorted(self.letters_stat.keys(), reverse=revers)),
+            #            ['буква', 'частота'], 'grid'))
         print('-' * 19)
         print(f'| всего  |{self.total_letters:^8}|')
         print('-' * 19)
