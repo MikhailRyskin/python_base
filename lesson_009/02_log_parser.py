@@ -23,8 +23,7 @@
 #   см https://refactoring.guru/ru/design-patterns/template-method
 #   и https://gitlab.skillbox.ru/vadim_shandrinov/python_base_snippets/snippets/4
 
-#
-# from collections import defaultdict
+from collections import defaultdict
 
 
 class LogParser:
@@ -42,7 +41,7 @@ class LogParser:
         self.file_out = output_file
         self.period = period
         self.right_border = 17
-        self.nok_events = {}
+        self.nok_events = defaultdict(int)
 
     def _right_border_calc(self):
         if self.period == 2:
@@ -59,14 +58,10 @@ class LogParser:
         with open(self.file_in, 'r', encoding='utf8') as file:
             for line in file:
                 current_line = line[1:self.right_border]
-                if current_line in self.nok_events:
-                    if line[:-1].endswith('NOK'):
-                        self.nok_events[current_line] += 1
+                if line[:-1].endswith('NOK'):
+                    self.nok_events[current_line] += 1
                 else:
-                    if line[:-1].endswith('NOK'):
-                        self.nok_events[current_line] = 1
-                    else:
-                        self.nok_events[current_line] = 0
+                    self.nok_events[current_line] += 0
 
     def write_content(self):
         with open(self.file_out, 'w+', encoding='utf8') as out_file:
