@@ -58,11 +58,13 @@ class LogParser:
         with open(self.file_in, 'r', encoding='utf8') as file:
             for line in file:
                 current_line = line[1:self.right_border]
-                # TODO Собираем только "NOK" остальные строки не нужны
+                # Собираем только "NOK" остальные строки не нужны
+                # TODO исправил, но вообще-то в задании - число событий NOK за каждую!!! минуту,
+                # т.е. если 0 событий, тоже вроде нужно выводить.
                 if line[:-1].endswith('NOK'):
                     self.nok_events[current_line] += 1
-                else:
-                    self.nok_events[current_line] += 0
+                # else:
+                #     self.nok_events[current_line] += 0
 
     def write_content(self):
         with open(self.file_out, 'w+', encoding='utf8') as out_file:
