@@ -58,6 +58,7 @@ class LogParser:
         with open(self.file_in, 'r', encoding='utf8') as file:
             for line in file:
                 current_line = line[1:self.right_border]
+                # TODO Собираем только "NOK" остальные строки не нужны
                 if line[:-1].endswith('NOK'):
                     self.nok_events[current_line] += 1
                 else:
