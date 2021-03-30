@@ -59,7 +59,7 @@ class LogParser:
             for line in file:
                 current_line = line[1:self.right_border]
                 # Собираем только "NOK" остальные строки не нужны
-                # TODO исправил, но вообще-то в задании - число событий NOK за каждую!!! минуту,
+                # исправил, но вообще-то в задании - число событий NOK за каждую!!! минуту,
                 # т.е. если 0 событий, тоже вроде нужно выводить.
                 if line[:-1].endswith('NOK'):
                     self.nok_events[current_line] += 1

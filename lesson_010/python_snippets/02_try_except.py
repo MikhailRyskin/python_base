@@ -75,11 +75,11 @@ def f2():
     return summ
 
 
-# total = f2()
-try:
+total = f2()try:
     total = f2()
 except ZeroDivisionError as exc:
     print(f'вот что пошло не так - {exc}, но мы устояли')
+
 
 
 # и ловить их можно на разных уровнях

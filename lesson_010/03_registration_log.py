@@ -21,5 +21,31 @@
 # - поле емейл НЕ содержит @ и .(точку): NotEmailError (кастомное исключение)
 # - поле возраст НЕ является числом от 10 до 99: ValueError
 # Вызов метода обернуть в try-except.
+class NotNameError(Exception):
+    pass
 
-# TODO здесь ваш код
+def data_validation(line):
+    name, email, age = line.split(' ')
+    age = int(age)
+    if age < 10 or age > 99:
+        raise ValueError('100')
+
+
+
+    else:
+        return True
+
+
+with open('registrations.txt', 'r', encoding='utf8') as reg_file:
+    for line in reg_file:
+        line = line[:-1]
+        try:
+            if data_validation(line):
+                print(line)
+        except ValueError as exc:
+            if 'unpack' in exc.args[0]:
+                print(f'в записи {line} НЕ присутсвуют все три поля')
+            elif '100' in exc.args[0]:
+                print(f'в записи {line} поле возраст НЕ является числом от 10 до 99')
+            else:
+                print(f'в записи {line} {exc}')
