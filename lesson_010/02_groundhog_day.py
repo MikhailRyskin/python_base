@@ -21,7 +21,7 @@ from random import randint
 
 ENLIGHTENMENT_CARMA_LEVEL = 777
 
-
+# TODO Добавьте метод __str__ в классы
 class IamGodError(Exception):
     pass
 
@@ -48,6 +48,8 @@ class SuicideError(Exception):
 
 def one_day():
     dice = randint(1, 13)
+    # TODO Создайте здесь список исключений, и когда на кубике выпадает 13 - выбрасывайте одно из них.
+    #  За место условий отлично подойдет random.choice
     if dice == 13:
         dice = randint(1, 6)
         if dice == 1:
@@ -74,6 +76,8 @@ with open('log_file.txt', 'w+', encoding='utf8') as log_file:
     while total_carma < ENLIGHTENMENT_CARMA_LEVEL:
         try:
             total_carma += one_day()
+        # TODO Исключения лучше перечислять в блоке "except",
+        #  чтобы выводить\записывать различные сообщения дополните классы методом __str__
         except IamGodError:
             log_file.write(f'день {day:>4} I am God\n')
         except DrunkError:

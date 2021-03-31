@@ -21,7 +21,7 @@
 # - поле емейл НЕ содержит @ и .(точку): NotEmailError (кастомное исключение)
 # - поле возраст НЕ является числом от 10 до 99: ValueError
 # Вызов метода обернуть в try-except.
-
+# TODO Добавьте метод __str__ в классы
 class NotNameError(Exception):
     pass
 
@@ -51,6 +51,7 @@ with open('registrations.txt', 'r', encoding='utf8') as reg_file,\
         try:
             if data_validation(line):
                 good_file.write(line + '\n')
+        # TODO Исключения лучше перечислять в блоке "except"
         except ValueError as exc:
             if 'unpack' in exc.args[0]:
                 bad_file.write(f'в записи {line} НЕ присутствуют все три поля\n')
