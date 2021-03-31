@@ -17,53 +17,51 @@
 # При создании собственных исключений максимально использовать функциональность
 # базовых встроенных исключений.
 
-from random import randint
+from random import randint, choice
 
 ENLIGHTENMENT_CARMA_LEVEL = 777
 
-# TODO Добавьте метод __str__ в классы
+# Добавьте метод __str__ в классы
+
+
 class IamGodError(Exception):
-    pass
+    def __str__(self):
+        return 'I am God'
 
 
 class DrunkError(Exception):
-    pass
+    def __str__(self):
+        return 'Drunk'
 
 
 class CarCrashError(Exception):
-    pass
+    def __str__(self):
+        return 'Car Crash'
 
 
 class GluttonyError(Exception):
-    pass
+    def __str__(self):
+        return 'Gluttony'
 
 
 class DepressionError(Exception):
-    pass
+    def __str__(self):
+        return 'Depression'
 
 
 class SuicideError(Exception):
-    pass
+    def __str__(self):
+        return 'Suicide'
 
 
 def one_day():
     dice = randint(1, 13)
-    # TODO Создайте здесь список исключений, и когда на кубике выпадает 13 - выбрасывайте одно из них.
+    # Создайте здесь список исключений, и когда на кубике выпадает 13 - выбрасывайте одно из них.
     #  За место условий отлично подойдет random.choice
+    groundhog_exceptions = [IamGodError, DrunkError, CarCrashError,
+                            GluttonyError, DepressionError, SuicideError]
     if dice == 13:
-        dice = randint(1, 6)
-        if dice == 1:
-            raise IamGodError
-        elif dice == 2:
-            raise DrunkError
-        elif dice == 3:
-            raise CarCrashError
-        elif dice == 4:
-            raise GluttonyError
-        elif dice == 5:
-            raise DepressionError
-        elif dice == 6:
-            raise SuicideError
+        raise choice(groundhog_exceptions)
     else:
         carma = randint(1, 7)
         return carma
@@ -76,20 +74,12 @@ with open('log_file.txt', 'w+', encoding='utf8') as log_file:
     while total_carma < ENLIGHTENMENT_CARMA_LEVEL:
         try:
             total_carma += one_day()
-        # TODO Исключения лучше перечислять в блоке "except",
+        # Исключения лучше перечислять в блоке "except",
         #  чтобы выводить\записывать различные сообщения дополните классы методом __str__
-        except IamGodError:
-            log_file.write(f'день {day:>4} I am God\n')
-        except DrunkError:
-            log_file.write(f'день {day:>4} Drunk\n')
-        except CarCrashError:
-            log_file.write(f'день {day:>4} Car Crash\n')
-        except GluttonyError:
-            log_file.write(f'день {day:>4} Gluttony\n')
-        except DepressionError:
-            log_file.write(f'день {day:>4} Depression\n')
-        except SuicideError:
-            log_file.write(f'день {day:>4} Suicide\n')
+        except (IamGodError, DrunkError, CarCrashError,
+                GluttonyError, DepressionError, SuicideError) as exc:
+            except_content = f'день {day:>4} {str(exc)}\n'
+            log_file.write(except_content)
 
         day += 1
 

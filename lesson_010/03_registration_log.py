@@ -21,13 +21,17 @@
 # - поле емейл НЕ содержит @ и .(точку): NotEmailError (кастомное исключение)
 # - поле возраст НЕ является числом от 10 до 99: ValueError
 # Вызов метода обернуть в try-except.
-# TODO Добавьте метод __str__ в классы
+
+#  Добавьте метод __str__ в классы
+
 class NotNameError(Exception):
-    pass
+    def __str__(self):
+        return 'поле имени содержит НЕ только буквы'
 
 
 class NotEmailError(Exception):
-    pass
+    def __str__(self):
+        return 'поле емейл НЕ содержит @ и .(точку)'
 
 
 def data_validation(data_line):
@@ -36,9 +40,9 @@ def data_validation(data_line):
     if age < 10 or age > 99:
         raise ValueError('100')
     elif not name.isalpha():
-        raise NotNameError
+        raise NotNameError([])
     elif not ('@' in email and '.' in email):
-        raise NotEmailError
+        raise NotEmailError([])
     else:
         return True
 
@@ -51,15 +55,13 @@ with open('registrations.txt', 'r', encoding='utf8') as reg_file,\
         try:
             if data_validation(line):
                 good_file.write(line + '\n')
-        # TODO Исключения лучше перечислять в блоке "except"
-        except ValueError as exc:
+        # Исключения лучше перечислять в блоке "except"
+        except (ValueError, NotNameError, NotEmailError) as exc:
             if 'unpack' in exc.args[0]:
-                bad_file.write(f'в записи {line} НЕ присутствуют все три поля\n')
+                message = 'НЕ присутствуют все три поля'
             elif '100' in exc.args[0]:
-                bad_file.write(f'в записи {line} поле возраст НЕ является числом от 10 до 99\n')
+                message = 'поле возраст НЕ является числом от 10 до 99'
             else:
-                bad_file.write(f'в записи {line} {exc}\n')
-        except NotNameError:
-            bad_file.write(f'в записи {line} поле имени содержит НЕ только буквы\n')
-        except NotEmailError:
-            bad_file.write(f'в записи {line} поле емейл НЕ содержит @ и .(точку)\n')
+                message = str(exc)
+            except_content = f'в записи {line} {message}\n'
+            bad_file.write(except_content)
