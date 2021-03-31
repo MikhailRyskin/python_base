@@ -21,31 +21,44 @@
 # - поле емейл НЕ содержит @ и .(точку): NotEmailError (кастомное исключение)
 # - поле возраст НЕ является числом от 10 до 99: ValueError
 # Вызов метода обернуть в try-except.
+
 class NotNameError(Exception):
     pass
 
-def data_validation(line):
-    name, email, age = line.split(' ')
+
+class NotEmailError(Exception):
+    pass
+
+
+def data_validation(data_line):
+    name, email, age = data_line.split(' ')
     age = int(age)
     if age < 10 or age > 99:
         raise ValueError('100')
-
-
-
+    elif not name.isalpha():
+        raise NotNameError
+    elif not ('@' in email and '.' in email):
+        raise NotEmailError
     else:
         return True
 
 
-with open('registrations.txt', 'r', encoding='utf8') as reg_file:
+with open('registrations.txt', 'r', encoding='utf8') as reg_file,\
+        open('registrations_good.log', 'w+', encoding='utf8') as good_file,\
+        open('registrations_bad.log', 'w+', encoding='utf8') as bad_file:
     for line in reg_file:
         line = line[:-1]
         try:
             if data_validation(line):
-                print(line)
+                good_file.write(line + '\n')
         except ValueError as exc:
             if 'unpack' in exc.args[0]:
-                print(f'в записи {line} НЕ присутсвуют все три поля')
+                bad_file.write(f'в записи {line} НЕ присутствуют все три поля\n')
             elif '100' in exc.args[0]:
-                print(f'в записи {line} поле возраст НЕ является числом от 10 до 99')
+                bad_file.write(f'в записи {line} поле возраст НЕ является числом от 10 до 99\n')
             else:
-                print(f'в записи {line} {exc}')
+                bad_file.write(f'в записи {line} {exc}\n')
+        except NotNameError:
+            bad_file.write(f'в записи {line} поле имени содержит НЕ только буквы\n')
+        except NotEmailError:
+            bad_file.write(f'в записи {line} поле емейл НЕ содержит @ и .(точку)\n')
