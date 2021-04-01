@@ -86,3 +86,5 @@ with open('log_file.txt', 'w+', encoding='utf8') as log_file:
 print(f'день {day}, карма {total_carma}!!!')
 
 # https://goo.gl/JnsDqu
+
+# зачет!

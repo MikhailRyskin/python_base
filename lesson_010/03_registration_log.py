@@ -65,3 +65,5 @@ with open('registrations.txt', 'r', encoding='utf8') as reg_file,\
                 message = str(exc)
             except_content = f'в записи {line} {message}\n'
             bad_file.write(except_content)
+
+# зачет!
