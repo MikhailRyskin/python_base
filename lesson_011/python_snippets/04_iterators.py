@@ -44,12 +44,7 @@ for value in my_family:
 # и цикл прекращается
 
 # То есть под капотом у for происходит _как_бы_ следующее
-try:
-    while True:
-        value = my_family.__next__()
-        print(value)
-except StopIteration:
-    pass
+
 
 # Такой же алгоритм срабатывает при вычислении вхождения в последовательность - оператор in
 print('Я - Алексей' in my_family)
