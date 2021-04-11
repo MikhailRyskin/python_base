@@ -35,3 +35,5 @@ draw_triangle_6 = get_polygon(number_sides=6)
 draw_triangle_6(start_point=sd.get_point(500, 200), angle=39, side_length=50)
 
 sd.pause()
+
+# зачет!
