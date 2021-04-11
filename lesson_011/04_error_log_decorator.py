@@ -54,7 +54,7 @@ for line in lines:
         check_line(line)
     except Exception as exc:
         print(f'Invalid format: {exc}')
-
+# TODO Про эту функцию забыли
 perky(param=42)
 
 

@@ -24,6 +24,8 @@
 
 class PrimeNumbers:
     def __init__(self, n):
+        # TODO Имена лучше давать осмысленные
+        #  например - self.start и self.end
         self.n = n
         self.i = 0
         self.prime_numbers = []

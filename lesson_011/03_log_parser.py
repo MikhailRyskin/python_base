@@ -18,16 +18,21 @@
 class LogParser:
 
     def __init__(self, file_name):
+        # TODO Читать сразу весь файл в память не лучшая идея, лучше использовать цикл for для создания маленько буфера
+        #  Чтение всего фала в память влечет за собой накладные расходы,
+        #  а вы можете не знать сколько есть свободной памяти там где запускается скрипт
         in_file = open(file_name, 'r', encoding='utf8')
         self.file = in_file.readlines()
         in_file.close()
         self.i = 0
 
     def __iter__(self):
+        # TODO Открывать файл стоит здесь
         self.i = 0
         return self
 
     def __next__(self):
+        # TODO а здесь уже основной цикл по поиску "NOK" строк
         events_count = 0
         while self.i < len(self.file):
             line = self.file[self.i].rstrip()
