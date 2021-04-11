@@ -7,19 +7,29 @@
 # Формат лога: <имя функции> <параметры вызова> <тип ошибки> <текст ошибки>
 # Лог файл открывать каждый раз при ошибке в режиме 'a'
 
+MY_FILE = 'error.txt'
 
-def log_errors(func):
-    pass
-    # TODO здесь ваш код
+
+def log_errors(file_name):
+    def log_errors_in(func):
+        def surrogate(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            except Exception as exc:
+                with open(file_name, 'a', encoding='utf8') as errors_file:
+                    errors_file.write(f'{func.__name__}  {args, kwargs}  {type(exc)}  {exc} \n')
+                raise Exception(exc)
+        return surrogate
+    return log_errors_in
 
 
 # Проверить работу на следующих функциях
-@log_errors
+@log_errors(file_name=MY_FILE)
 def perky(param):
     return param / 0
 
 
-@log_errors
+@log_errors(file_name=MY_FILE)
 def check_line(line):
     name, email, age = line.split(' ')
     if not name.isalpha():
@@ -38,11 +48,13 @@ lines = [
     'Земфира 86',
     'Равшан wmsuuzsxi@mail.ru 35',
 ]
+
 for line in lines:
     try:
         check_line(line)
     except Exception as exc:
         print(f'Invalid format: {exc}')
+
 perky(param=42)
 
 
