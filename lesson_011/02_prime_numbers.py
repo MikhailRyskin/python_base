@@ -76,6 +76,7 @@ def prime_numbers_generator(n):
 for number in prime_numbers_generator(n=100):
     print(number)
 
+# зачет 2 части
 
 # Часть 3
 # Написать несколько функций-фильтров, которые выдает True, если число:
