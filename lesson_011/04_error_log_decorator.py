@@ -66,3 +66,5 @@ except Exception as exc:
 # @log_errors('function_errors.log')
 # def func():
 #     pass
+
+# зачет!
