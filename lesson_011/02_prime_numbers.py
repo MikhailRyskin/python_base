@@ -24,48 +24,57 @@
 
 class PrimeNumbers:
     def __init__(self, n):
-        # TODO Имена лучше давать осмысленные
+        # Имена лучше давать осмысленные
         #  например - self.start и self.end
-        self.n = n
-        self.i = 0
+        self.end = n
+        self.start = 0
         self.prime_numbers = []
 
     def __iter__(self):
-        self.i = 1
+        self.start = 1
         return self
 
     def __next__(self):
         while True:
-            self.i += 1
-            if self.i > self.n:
+            self.start += 1
+            if self.start > self.end:
                 raise StopIteration()
             else:
                 for prime in self.prime_numbers:
-                    if self.i % prime == 0:
+                    if self.start % prime == 0:
                         break
                 else:
-                    self.prime_numbers.append(self.i)
-                    return self.i
+                    self.prime_numbers.append(self.start)
+                    return self.start
 
 
 prime_number_iterator = PrimeNumbers(n=100)
 for number in prime_number_iterator:
     print(number)
+print('_' * 10)
 
-
-# TODO после подтверждения части 1 преподавателем, можно делать
+# после подтверждения части 1 преподавателем, можно делать
 # Часть 2
 # Теперь нужно создать генератор, который выдает последовательность простых чисел до n
 # Распечатать все простые числа до 10000 в столбик
 
 
-# def prime_numbers_generator(n):
-#     pass
-#     # TODO здесь ваш код
-#
-#
-# for number in prime_numbers_generator(n=10000):
-#     print(number)
+def prime_numbers_generator(n):
+    end = n
+    start = 1
+    prime_numbers = []
+    while start < end:
+        start += 1
+        for prime in prime_numbers:
+            if start % prime == 0:
+                break
+        else:
+            prime_numbers.append(start)
+            yield start
+
+
+for number in prime_numbers_generator(n=100):
+    print(number)
 
 
 # Часть 3
