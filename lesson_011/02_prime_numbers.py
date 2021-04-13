@@ -48,10 +48,10 @@ class PrimeNumbers:
                     return self.start
 
 
-prime_number_iterator = PrimeNumbers(n=100)
-for number in prime_number_iterator:
-    print(number)
-print('_' * 10)
+# prime_number_iterator = PrimeNumbers(n=1000)
+# for number in prime_number_iterator:
+#     print(number)
+# print('_' * 10)
 
 # после подтверждения части 1 преподавателем, можно делать
 # Часть 2
@@ -59,7 +59,31 @@ print('_' * 10)
 # Распечатать все простые числа до 10000 в столбик
 
 
-def prime_numbers_generator(n):
+def is_palindrome(check_number):
+    return str(check_number) == str(check_number)[::-1]
+
+
+def is_lucky_number(check_number):
+    if len(str(check_number)) < 2:
+        return False
+    border = len(str(check_number)) // 2
+    left = str(check_number)[:border]
+    if len(str(check_number)) % 2:
+        border += 1
+    right = str(check_number)[border:]
+    left_sum = sum([int(x) for x in left])
+    right_sum = sum([int(x) for x in right])
+    return left_sum == right_sum
+
+
+def not_contain_0(check_number):
+    result = True
+    if '0' in str(check_number):
+        result = False
+    return result
+
+
+def prime_numbers_generator(n, *args):
     end = n
     start = 1
     prime_numbers = []
@@ -70,11 +94,22 @@ def prime_numbers_generator(n):
                 break
         else:
             prime_numbers.append(start)
-            yield start
+            flag = True
+            for func in args:
+                if not func(start):
+                    flag = False
+            if flag:
+                yield start
 
 
-for number in prime_numbers_generator(n=100):
+span = 100000
+additional_checks = [is_lucky_number, is_palindrome, not_contain_0]
+
+total = 0
+for number in prime_numbers_generator(span, *additional_checks):
     print(number)
+    total += 1
+print('Всего таких чисел:', total)
 
 # зачет 2 части
 
