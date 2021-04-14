@@ -13,6 +13,7 @@
 # на консоли должно появится что-то вроде
 #
 # [2018-05-17 01:57] 1234
+from collections import defaultdict
 
 
 class LogParser:
@@ -50,61 +51,95 @@ class LogParser:
     #                     return current_line, events_count
     #     raise StopIteration
 
+    # def __init__(self, file_name):
+    #     self.file_name = file_name
+    #     self.file = None
+    #
+    # #  Для удобства предлагаю хранить временное значение в словаре, а затем удалять.
+    # #  Также стоит создать переменные для текущего и предыдущего ключа
+    # #  Примерно так:
+    # #  self.log_dict = defaultdict(int)
+    # #  self.last_key = None
+    # #  self.dict_key = None
+    # def __iter__(self):
+    #     self.file = open(self.file_name, 'r', encoding='utf8')
+    #     return self
+    #
+    # def __next__(self):
+    #     #  Цикл для поиска NOK удобнее вынести в другой метод к примеру "parse"
+    #     #  В методе "parse":
+    #     #  Проходимся по файлу который открыли
+    #     #       ищем NOK
+    #     #          нашли - режем строку присваивая ее, как ключ в self.dict_key
+    #     #          если прошлого ключа нет
+    #     #               присваиваем self.last_key значение
+    #     #          И заполняем словарь -  self.log_dict[self.dict_key] = ..
+    #     #          если ключи не равны т.е  "self.last_key" и  "self.dict_key" проще вернуть True
+    #     #  .
+    #     #  А здесь в "__next__" уже будем возвращать данные
+    #     #  также цикл, но уже можно будет проходится методу "parse" - while self.parse()
+    #     #   формируем строку используя  "self.last_key" и словарь  "self.log_dict"
+    #     #   удаляем ключ из него
+    #     #   возвращаем строку
+    #     #   .
+    #     #  после завершения закрываем файл и выбрасываем исключение
+    #
+    #     events_count = 0
+    #     for line in self.file:
+    #         line = line.rstrip()
+    #         current_line = line[1:17]
+    #         if line.endswith('NOK'):
+    #             events_count += 1
+    #         #  мне непонятно, как идя по циклу for line in self.file анализировать следующую строку.
+    #         # Сейчас всё работает неверно, т.к. readline() двигает текущую позицию указателя в конец следующей строки.
+    #         # Как можно посмотреть след. строку, но в цикле проходить все строки без пропусков?
+    #         #  А зачем смотреть следующую строку?
+    #         #  Идите циклом по открытому файлу и проверяйте NOK,
+    #         #  а прошлое значение можно сохранить в  self.last_line_NOK = 0
+    #
+    #         # file_position = self.file.tell()
+    #         next_line = self.file.readline().rstrip()
+    #         # self.file.seek(file_position, 0)
+    #         if next_line:
+    #             next_line = next_line[1:17]
+    #             if next_line != current_line:
+    #                 if events_count:
+    #                     return current_line, events_count
+    #         else:
+    #             if events_count:
+    #                 return current_line, events_count
+    #     self.file.close()
+    #     raise StopIteration
+
     def __init__(self, file_name):
         self.file_name = file_name
         self.file = None
-    # TODO Для удобства предлагаю хранить временное значение в словаре, а затем удалять.
-    #  Также стоит создать переменные для текущего и предыдущего ключа
-    #  Примерно так:
-    #  self.log_dict = defaultdict(int)
-    #  self.last_key = None
-    #  self.dict_key = None
+        self.log_dict = defaultdict(int)
+        self.last_key = None
+        self.dict_key = None
+
     def __iter__(self):
         self.file = open(self.file_name, 'r', encoding='utf8')
         return self
 
-    def __next__(self):
-        # TODO Цикл для поиска NOK удобнее вынести в другой метод к примеру "parse"
-        #  В методе "parse":
-        #  Проходимся по файлу который открыли
-        #       ищем NOK
-        #          нашли - режем строку присваивая ее, как ключ в self.dict_key
-        #          если прошлого ключа нет
-        #               присваиваем self.last_key значение
-        #          И заполняем словарь -  self.log_dict[self.dict_key] = ..
-        #          если ключи не равны т.е  "self.last_key" и  "self.dict_key" проще вернуть True
-        #  .
-        #  А здесь в "__next__" уже будем возвращать данные
-        #  также цикл, но уже можно будет проходится методу "parse" - while self.parse()
-        #   формируем строку используя  "self.last_key" и словарь  "self.log_dict"
-        #   удаляем ключ из него
-        #   возвращаем строку
-        #   .
-        #  после завершения закрываем файл и выбрасываем исключение
-
-        events_count = 0
+    def parse(self):
         for line in self.file:
             line = line.rstrip()
-            current_line = line[1:17]
             if line.endswith('NOK'):
-                events_count += 1
-#  мне непонятно, как идя по циклу for line in self.file анализировать следующую строку.
-# Сейчас всё работает неверно, т.к. readline() двигает текущую позицию указателя в конец следующей строки.
-# Как можно посмотреть след. строку, но в цикле проходить все строки без пропусков?
-# TODO А зачем смотреть следующую строку?
-#  Идите циклом по открытому файлу и проверяйте NOK, а прошлое значение можно сохранить в  self.last_line_NOK = 0
+                self.dict_key = line[1:17]
+                if not self.last_key:
+                    self.last_key = self.dict_key
+                self.log_dict[self.dict_key] += 1
+                if self.last_key != self.dict_key:
+                    return True
 
-            # file_position = self.file.tell()
-            next_line = self.file.readline().rstrip()
-            # self.file.seek(file_position, 0)
-            if next_line:
-                next_line = next_line[1:17]
-                if next_line != current_line:
-                    if events_count:
-                        return current_line, events_count
-            else:
-                if events_count:
-                    return current_line, events_count
+    def __next__(self):
+        while self.parse():
+            result = f'{self.last_key} {self.log_dict[self.last_key]}'
+            self.log_dict.pop(self.last_key, None)
+            self.last_key = self.dict_key
+            return result
+        # TODO так не обрабатывается последний результат. Как его обработать?
         self.file.close()
         raise StopIteration
 
@@ -112,5 +147,5 @@ class LogParser:
 my_file_name = 'events.txt'
 
 grouped_events = LogParser(my_file_name)
-for group_time, event_count in grouped_events:
-    print(f'[{group_time}] {event_count}')
+for event_count in grouped_events:
+    print(f'{event_count}')

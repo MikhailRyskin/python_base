@@ -98,6 +98,7 @@ def prime_numbers_generator(n, *args):
             for func in args:
                 if not func(start):
                     flag = False
+                    break
             if flag:
                 yield start
 
