@@ -134,7 +134,7 @@ class LogParser:
                     return True
 
     def __next__(self):
-        while self.parse():
+        while self.parse():  # TODO Добавить условие в цикл, если словарь не пуст
             result = f'{self.last_key} {self.log_dict[self.last_key]}'
             self.log_dict.pop(self.last_key, None)
             self.last_key = self.dict_key
