@@ -134,12 +134,12 @@ class LogParser:
                     return True
 
     def __next__(self):
-        while self.parse():  # TODO Добавить условие в цикл, если словарь не пуст
+        while self.parse() or self.log_dict:  # Добавить условие в цикл, если словарь не пуст
             result = f'{self.last_key} {self.log_dict[self.last_key]}'
             self.log_dict.pop(self.last_key, None)
             self.last_key = self.dict_key
             return result
-        # TODO так не обрабатывается последний результат. Как его обработать?
+        #  так не обрабатывается последний результат. Как его обработать?
         self.file.close()
         raise StopIteration
 
