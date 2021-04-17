@@ -17,7 +17,10 @@ class LinkExtractor(HTMLParser):
         attrs = dict(attrs)
         if tag == 'link':
             if 'rel' in attrs and attrs['rel'] == 'stylesheet':
-                link = self._refine(attrs['href'])
+                if 'href' in attrs:
+                    link = self._refine(attrs['href'])
+                else:
+                    link = self._refine(attrs['data-href'])
                 self.links.append(link)
         elif tag == 'script':
             if 'src' in attrs:

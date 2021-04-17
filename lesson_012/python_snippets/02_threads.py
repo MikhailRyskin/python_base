@@ -406,7 +406,7 @@ class Fisher(Thread):
 
 vasya = Fisher(name='Вася', worms=100)
 vasya.start()
-time.sleep(1)
+time.sleep(2)
 if vasya.is_alive():  # кстати с помощью этого метода можно проверить выполняется ли еще поток?
     vasya.need_stop = True
 vasya.join()  # ожидание завершения обязательно - поток может некоторое время финализировать работу
