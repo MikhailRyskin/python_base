@@ -75,50 +75,70 @@
 
 #  написать код в однопоточном/однопроцессорном стиле
 import os
-# from pprint import pprint
+import time
+
+
+class VolatilityCounter:
+
+    tickers_volatility = dict()
+
+    def __init__(self, data_dir_path, data_file):
+        self.data_file = data_file
+        self.data_dir_path = data_dir_path
+
+    def volatility_calc(self, secid, price_list):
+        half_sum = (max(price_list) + min(price_list)) / 2
+        volatility = ((max(price_list) - min(price_list)) / half_sum) * 100
+        self.tickers_volatility[secid] = round(volatility, 2)
+
+    def run(self):
+        full_file_path = os.path.join(self.data_dir_path, self.data_file)
+        file = open(full_file_path, 'r')
+        first_line = file.readline()
+        price_list = []
+        for line in file:
+            secid, trade_time, price_str, quantity = line.split(',')
+            price = float(price_str)
+            price_list.append(price)
+        file.close()
+        self.volatility_calc(secid, price_list)
+
+
+def output_result(result_dict):
+    volatility_ticker = dict()
+    for ticker, volatility in result_dict.items():
+        if volatility in volatility_ticker:
+            volatility_ticker[volatility].append(ticker)
+        else:
+            volatility_ticker[volatility] = [ticker]
+    print('Максимальная волатильность:')
+    for volatility in sorted(volatility_ticker.keys(), reverse=True)[:3]:
+        for ticker in volatility_ticker[volatility]:
+            print(f'    {ticker} - {volatility} %')
+    print(' Минимальная волатильность:')
+    min_volatility = sorted(volatility_ticker.keys(), reverse=True)
+    if 0 in volatility_ticker:
+        min_volatility = min_volatility[-4:-1]
+    else:
+        min_volatility = min_volatility[-3:-0]
+    for volatility in min_volatility:
+        for ticker in volatility_ticker[volatility]:
+            print(f'    {ticker} - {volatility} %')
+    print('Нулевая волатильность:')
+    if 0 in volatility_ticker:
+        print('   ', *volatility_ticker[0])
+
 
 data_dir = 'trades'
+started_at = time.time()
 
 data_dir_path = os.path.abspath(data_dir)
-tickers_volatility = dict()
 for data_file in os.listdir(data_dir_path):
-    full_file_path = os.path.join(data_dir_path, data_file)
-    file = open(full_file_path, 'r')
-    first_line = file.readline()
-    price_list = []
-    for line in file:
-        secid, trade_time, price_str, quantity = line.split(',')
-        price = float(price_str)
-        price_list.append(price)
-    file.close()
-    half_sum = (max(price_list) + min(price_list)) / 2
-    volatility = ((max(price_list) - min(price_list)) / half_sum) * 100
-    tickers_volatility[secid] = round(volatility, 2)
-# pprint(tickers_volatility)
+    vol_counter = VolatilityCounter(data_dir_path, data_file)
+    vol_counter.run()
 
-volatility_ticker = dict()
-for ticker, volatility in tickers_volatility.items():
-    if volatility in volatility_ticker:
-        volatility_ticker[volatility].append(ticker)
-    else:
-        volatility_ticker[volatility] = [ticker]
-# pprint(volatility_ticker)
+ended_at = time.time()
+elapsed = round(ended_at - started_at, 2)
+print(f'Функция работала {elapsed} секунд(ы)')
 
-print('Максимальная волатильность:')
-for volatility in sorted(volatility_ticker.keys(), reverse=True)[:3]:
-    for ticker in volatility_ticker[volatility]:
-        print(f'    {ticker} - {volatility} %')
-
-print(' Минимальная волатильность:')
-min_volatility = sorted(volatility_ticker.keys(), reverse=True)
-if 0 in volatility_ticker:
-    min_volatility = min_volatility[-4:-1]
-else:
-    min_volatility = min_volatility[-3:-0]
-for volatility in min_volatility:
-    for ticker in volatility_ticker[volatility]:
-        print(f'    {ticker} - {volatility} %')
-
-print('Нулевая волатильность:')
-if 0 in volatility_ticker:
-    print('   ', *volatility_ticker[0])
+output_result(VolatilityCounter.tickers_volatility)
