@@ -74,14 +74,14 @@
 #         <обработка данных>
 
 #  написать код в однопоточном/однопроцессорном стиле
-import os
-import time
 
-# TODO Предлагаю переработать логику и немного упростить класс.
+
+# Предлагаю переработать логику и немного упростить класс.
 #  То есть, классу передаем не всю папку "trades", а по одному "csv" файлу
 #  Он обрабатывает информацию и возвращает данные по тикеру и волатильности.
 #  .
 #  С модулем "csv" это сделать проще почему вы его не использовали?
+#  TODO про  модуль "csv" услышал первый раз, поэтому и не использовал :)
 #  Классу достаточно будет двух методов.
 #  1 - Получение информации
 #  Создаем список цен и имя тикера
@@ -99,30 +99,37 @@ import time
 #  - склеиваем путь и возвращаем "yield"
 #  .
 #  Остается самое простое - это написать цикл который будет собирать словарь с волатильностью
+import os
+import csv
+import time
+
+
 class VolatilityCounter:
 
-    tickers_volatility = dict()
-
-    def __init__(self, data_dir_path, data_file):
+    def __init__(self, data_file):
         self.data_file = data_file
-        self.data_dir_path = data_dir_path
 
-    def volatility_calc(self, secid, price_list):
+    def volatility_calc(self):
+        ticker, price_list = self.get_data()
         half_sum = (max(price_list) + min(price_list)) / 2
         volatility = ((max(price_list) - min(price_list)) / half_sum) * 100
-        self.tickers_volatility[secid] = round(volatility, 2)
+        return ticker, round(volatility, 2)
 
-    def run(self):
-        full_file_path = os.path.join(self.data_dir_path, self.data_file)
-        file = open(full_file_path, 'r')
-        first_line = file.readline()
+    def get_data(self):
         price_list = []
-        for line in file:
-            secid, trade_time, price_str, quantity = line.split(',')
-            price = float(price_str)
-            price_list.append(price)
-        file.close()
-        self.volatility_calc(secid, price_list)
+        with open(self.data_file, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                ticker = row['SECID']
+                price_list.append(float(row['PRICE']))
+        return ticker, price_list
+
+
+def file_path_generator(dir_path):
+    for dirpath, dirnames, filenames in os.walk(dir_path):
+        for file in filenames:
+            full_file_path = os.path.join(dirpath, file)
+            yield full_file_path
 
 
 def output_result(result_dict):
@@ -150,16 +157,17 @@ def output_result(result_dict):
         print('   ', *volatility_ticker[0])
 
 
-data_dir = 'trades'
 started_at = time.time()
 
+data_dir = 'trades'
+tickers_volatility = dict()
 data_dir_path = os.path.abspath(data_dir)
-for data_file in os.listdir(data_dir_path):
-    vol_counter = VolatilityCounter(data_dir_path, data_file)
-    vol_counter.run()
+for data_file in file_path_generator(data_dir_path):
+    vol_counter = VolatilityCounter(data_file)
+    ticker, volatility = vol_counter.volatility_calc()
+    tickers_volatility[ticker] = volatility
+output_result(tickers_volatility)
 
 ended_at = time.time()
 elapsed = round(ended_at - started_at, 2)
 print(f'Функция работала {elapsed} секунд(ы)')
-
-output_result(VolatilityCounter.tickers_volatility)
