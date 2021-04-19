@@ -124,7 +124,7 @@ class VolatilityCounter:
                 price_list.append(float(row['PRICE']))
         return ticker, price_list
 
-
+# TODO Функции перенесите в отдельный модуль - utils.py к примеру
 def file_path_generator(dir_path):
     for dirpath, dirnames, filenames in os.walk(dir_path):
         for file in filenames:
@@ -156,7 +156,7 @@ def output_result(result_dict):
     if 0 in volatility_ticker:
         print('   ', *volatility_ticker[0])
 
-
+# TODO Для замера времени сделайте также функцию
 started_at = time.time()
 
 data_dir = 'trades'
@@ -171,3 +171,5 @@ output_result(tickers_volatility)
 ended_at = time.time()
 elapsed = round(ended_at - started_at, 2)
 print(f'Функция работала {elapsed} секунд(ы)')
+
+# зачет!
