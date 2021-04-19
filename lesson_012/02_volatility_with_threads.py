@@ -56,11 +56,14 @@ def main():
     data_dir = 'trades'
     tickers_volatility = dict()
     data_dir_path = os.path.abspath(data_dir)
+    # TODO Добавьте в конструктор тикеров, чтобы здесь сразу их передавать в словарь.
+    #  То есть чтобы создавать класс таким образом VolatilityCounter(data_file=data_file, tikers=tickers_volatility)
     vol_counters = [VolatilityCounter(data_file) for data_file in file_path_generator(data_dir_path)]
     for vol_counter in vol_counters:
         vol_counter.start()
     for vol_counter in vol_counters:
         vol_counter.join()
+    # TODO Тогда это не понадобится, потому что после "join" словарь будет наполнен данными
     for vol_counter in vol_counters:
         tickers_volatility[vol_counter.ticker] = vol_counter.volatility
     output_result(tickers_volatility)
