@@ -81,7 +81,7 @@
 #  Он обрабатывает информацию и возвращает данные по тикеру и волатильности.
 #  .
 #  С модулем "csv" это сделать проще почему вы его не использовали?
-#  TODO про  модуль "csv" услышал первый раз, поэтому и не использовал :)
+#  про  модуль "csv" услышал первый раз, поэтому и не использовал :)
 #  Классу достаточно будет двух методов.
 #  1 - Получение информации
 #  Создаем список цен и имя тикера
@@ -101,7 +101,7 @@
 #  Остается самое простое - это написать цикл который будет собирать словарь с волатильностью
 import os
 import csv
-import time
+from utils import file_path_generator, output_result, time_track
 
 
 class VolatilityCounter:
@@ -124,52 +124,22 @@ class VolatilityCounter:
                 price_list.append(float(row['PRICE']))
         return ticker, price_list
 
-# TODO Функции перенесите в отдельный модуль - utils.py к примеру
-def file_path_generator(dir_path):
-    for dirpath, dirnames, filenames in os.walk(dir_path):
-        for file in filenames:
-            full_file_path = os.path.join(dirpath, file)
-            yield full_file_path
+
+# Функции перенесите в отдельный модуль - utils.py к примеру
+# Для замера времени сделайте также функцию
+@time_track
+def main():
+    data_dir = 'trades'
+    tickers_volatility = dict()
+    data_dir_path = os.path.abspath(data_dir)
+    for data_file in file_path_generator(data_dir_path):
+        vol_counter = VolatilityCounter(data_file)
+        ticker, volatility = vol_counter.volatility_calc()
+        tickers_volatility[ticker] = volatility
+    output_result(tickers_volatility)
 
 
-def output_result(result_dict):
-    volatility_ticker = dict()
-    for ticker, volatility in result_dict.items():
-        if volatility in volatility_ticker:
-            volatility_ticker[volatility].append(ticker)
-        else:
-            volatility_ticker[volatility] = [ticker]
-    print('Максимальная волатильность:')
-    for volatility in sorted(volatility_ticker.keys(), reverse=True)[:3]:
-        for ticker in volatility_ticker[volatility]:
-            print(f'    {ticker} - {volatility} %')
-    print(' Минимальная волатильность:')
-    min_volatility = sorted(volatility_ticker.keys(), reverse=True)
-    if 0 in volatility_ticker:
-        min_volatility = min_volatility[-4:-1]
-    else:
-        min_volatility = min_volatility[-3:-0]
-    for volatility in min_volatility:
-        for ticker in volatility_ticker[volatility]:
-            print(f'    {ticker} - {volatility} %')
-    print('Нулевая волатильность:')
-    if 0 in volatility_ticker:
-        print('   ', *volatility_ticker[0])
-
-# TODO Для замера времени сделайте также функцию
-started_at = time.time()
-
-data_dir = 'trades'
-tickers_volatility = dict()
-data_dir_path = os.path.abspath(data_dir)
-for data_file in file_path_generator(data_dir_path):
-    vol_counter = VolatilityCounter(data_file)
-    ticker, volatility = vol_counter.volatility_calc()
-    tickers_volatility[ticker] = volatility
-output_result(tickers_volatility)
-
-ended_at = time.time()
-elapsed = round(ended_at - started_at, 2)
-print(f'Функция работала {elapsed} секунд(ы)')
+if __name__ == '__main__':
+    main()
 
 # зачет!
