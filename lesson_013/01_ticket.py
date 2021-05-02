@@ -18,6 +18,11 @@ def make_ticket(fio, from_, to, date, out_path=None):
     im = Image.open(template)
     draw = ImageDraw.Draw(im)
     font = ImageFont.truetype(font_path, size=14)
+    # TODO Для цена заведите стандартное значение в параметре или лучше константу.
+    #  А координаты для рисования стоит записат ьв структуру данных.
+    #  Список словарей к примеру:
+    #  координаты = [ {'cord': ..., 'text': ...},
+    #  Это позволит избежать дублирования "draw.text"
     draw.text((45, 125), fio, font=font, fill=ImageColor.colormap['black'])
     draw.text((45, 195), from_, font=font, fill=ImageColor.colormap['black'])
     draw.text((45, 260), to, font=font, fill=ImageColor.colormap['black'])
