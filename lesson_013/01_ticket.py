@@ -53,3 +53,5 @@ parser.add_argument('data', type=str, help='DATA')
 parser.add_argument('--save_to', type=str, default='ticket.png', help='--save_to (default: ticket.png)')
 args = parser.parse_args()
 make_ticket(fio=args.fio, from_=args.from_, to=args.to, date=args.data, out_path=args.save_to)
+
+# зачет!
