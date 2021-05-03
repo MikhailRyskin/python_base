@@ -18,21 +18,21 @@ def make_ticket(fio, from_, to, date, out_path=None):
     im = Image.open(template)
     draw = ImageDraw.Draw(im)
     font = ImageFont.truetype(font_path, size=14)
-    # TODO Для цена заведите стандартное значение в параметре или лучше константу.
-    #  А координаты для рисования стоит записат ьв структуру данных.
+    #  Для цена заведите стандартное значение в параметре или лучше константу.
+    #  А координаты для рисования стоит записать в структуру данных.
     #  Список словарей к примеру:
-    #  координаты = [ {'cord': ..., 'text': ...},
+    #  координаты = [ {'coord': ..., 'text': ...},
     #  Это позволит избежать дублирования "draw.text"
-    draw.text((45, 125), fio, font=font, fill=ImageColor.colormap['black'])
-    draw.text((45, 195), from_, font=font, fill=ImageColor.colormap['black'])
-    draw.text((45, 260), to, font=font, fill=ImageColor.colormap['black'])
-    draw.text((285, 260), date, font=font, fill=ImageColor.colormap['black'])
+    coord_texts = [{'coord': (45, 125), 'text': fio}, {'coord': (45, 195), 'text': from_},
+                   {'coord': (45, 260), 'text': to}, {'coord': (285, 260), 'text': date}]
+    for info in coord_texts:
+        draw.text(info['coord'], info['text'], font=font, fill=ImageColor.colormap['black'])
     out_path = out_path if out_path else 'ticket.png'
     im.save(out_path)
     print(f'Билет сохранён как {out_path}')
 
 
-# make_ticket('ИВАНОВ Т.П.', 'САНКТ-ПЕТЕРБУРГ', 'МОСКВА', '01.05')
+# make_ticket('ИВАНОВ И.П.', 'САНКТ-ПЕТЕРБУРГ', 'МОСКВА', '04.05')
 
 
 # Усложненное задание (делать по желанию).
