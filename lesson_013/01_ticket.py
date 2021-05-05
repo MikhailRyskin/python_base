@@ -12,7 +12,10 @@ from PIL import Image, ImageDraw, ImageFont, ImageColor
 import argparse
 
 
-def make_ticket(fio, from_, to, date, out_path=None):
+TEXT_COLOR = ImageColor.colormap['black']
+
+
+def make_ticket(fio, from_, to, date, color=TEXT_COLOR, out_path=None):
     font_path = os.path.join('fonts', 'Arial_Cyr.ttf')
     template = 'ticket_template.png'
     im = Image.open(template)
@@ -26,7 +29,7 @@ def make_ticket(fio, from_, to, date, out_path=None):
     coord_texts = [{'coord': (45, 125), 'text': fio}, {'coord': (45, 195), 'text': from_},
                    {'coord': (45, 260), 'text': to}, {'coord': (285, 260), 'text': date}]
     for info in coord_texts:
-        draw.text(info['coord'], info['text'], font=font, fill=ImageColor.colormap['black'])
+        draw.text(info['coord'], info['text'], font=font, fill=color)
     out_path = out_path if out_path else 'ticket.png'
     im.save(out_path)
     print(f'Билет сохранён как {out_path}')
