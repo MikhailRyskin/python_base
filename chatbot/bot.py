@@ -13,8 +13,13 @@ class Bot:
         self.group_id = group_id
         self.token = token
         self.vk = vk_api.VkApi(token=self.token)
-        # TODO без "from vk_api import bot_longpoll" в  vk_api.bot_longpoll...  bot_longpoll не определяется. Почему?
+        #  без "from vk_api import bot_longpoll" в  vk_api.bot_longpoll...  bot_longpoll не определяется. Почему?
         #  Разве недостаточно import vk_api?
+        # TODO Нет не достаточно,
+        #  делая "import vk_api" вы попадаете в __init__.py пакета "vk_api" где нет ссылки на "bot_longpoll"
+        #  А вам нужен модуль, который находится в этом пакете "bot_longpoll"
+        #  И нужно указывать  import vk_api.bot_longpoll либо сразу класс from vk_api.bot_longpoll import VkBotLongPoll
+        #  Это тоже самое что если бы в прошлом модуле импортировали не "from PIL", а просто "import PIL"
         self.long_poller = vk_api.bot_longpoll.VkBotLongPoll(vk=self.vk, group_id=self.group_id)
         self.api = self.vk.get_api()
 
@@ -29,7 +34,8 @@ class Bot:
     def on_event(self, event):
         if event.type == vk_api.bot_longpoll.VkBotEventType.MESSAGE_NEW:
             # print(event.object)
-            # TODO в видео используют event.object.text и event.object.peer_id, у меня это не работает. Почему?
+            #  в видео используют event.object.text и event.object.peer_id, у меня это не работает. Почему?
+            # TODO Библиотека за это время немного изменилась и ключи соответственно тоже
             print(event.object['message']['text'])
             self.api.messages.send(message='это эхо:' + event.object['message']['text'],
                                    random_id=random.randint(0, 2**20),
