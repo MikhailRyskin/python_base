@@ -1,9 +1,11 @@
 import unittest
+# TODO Импорт нужно поправить.
+#  У вас возможно жт ои работаетЮ но только лишь потому что вы промаркировали директорию"mark directory as sources root"
 from bowling import get_score
 
 
 class GetScoreTest(unittest.TestCase):
-
+    # TODO Текстов должно быть минимум  8-10
     def test_strike(self):
         result = get_score('XXXXXXXXXX')
         self.assertEqual(result, [20, 20, 20, 20, 20, 20, 20, 20, 20, 20], 'не работает подсчёт strike')

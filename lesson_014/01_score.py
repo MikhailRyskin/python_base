@@ -39,7 +39,9 @@ from bowling import get_score
 #
 # points = get_score(res_1)
 # print('\n', points)
-
+# TODO Добавьте описания
+#  К примеру - description='Консольная утилита для подсчета очков в боулинге'
+#  Если нет аргументов или забыли передать, сообщите об этом
 parser = argparse.ArgumentParser()
 parser.add_argument('game_result', type=str, help='GAME RESULT')
 args = parser.parse_args()
