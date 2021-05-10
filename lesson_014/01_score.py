@@ -32,20 +32,27 @@
 # Скрипт должен принимать параметр --result и печатать на консоль:
 #   Количество очков для результатов ХХХ - УУУ.
 
+#  Добавьте описания
+#  К примеру - description='Консольная утилита для подсчета очков в боулинге'
+#  Если нет аргументов или забыли передать, сообщите об этом
+
+""" Консольная утилита для подсчета очков в боулинге.
+входные данные:
+строка с записью результатов 10 фреймов без символов-разделителей
+выходные данные:
+сумма набранных очков"""
+
 import argparse
 from bowling import get_score
 
-# res_1 = 'X4/34-423232-XX8-'
-#
-# points = get_score(res_1)
-# print('\n', points)
-# TODO Добавьте описания
-#  К примеру - description='Консольная утилита для подсчета очков в боулинге'
-#  Если нет аргументов или забыли передать, сообщите об этом
+
 parser = argparse.ArgumentParser()
-parser.add_argument('game_result', type=str, help='GAME RESULT')
+parser.add_argument('game_result', nargs='?')
 args = parser.parse_args()
-get_score(game_result=args.game_result)
+if args.game_result:
+    get_score(game_result=args.game_result)
+else:
+    print('результаты игры не переданы')
 
 
 # При написании кода помнить, что заказчик может захотеть доработок и новых возможностей...

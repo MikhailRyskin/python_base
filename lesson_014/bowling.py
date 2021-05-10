@@ -24,62 +24,77 @@
 #  Получается 122 очка. При спаре(8/, 3/)  цифра не важна, главное чтобы цифра не превышала количество кегль
 #  .
 #  В итоговом варианте возвращайте сумму, а не заставляйте пользователя браться за калькулятор
+
+# TODO задание было сформулировано, мягко говоря, невнятно:
+# "Скрипт должен принимать параметр --result и печатать на консоль:
+#   Количество очков для результатов ХХХ - УУУ."
+# тут 3 икса и 3 игрека - полное впечатление, что нужно просто выводить количество очков для каждого фрейма
+
 #  Кстати если ввести - 'ХXXXXXXXXX' с одной буквой "Х" кот валится с ошибкой
 #  Сделайте замены символов для замены всех русских на анг или наоборот.
 #  Для получения фреймов думаю удобнее сделать генератор "yield", который прокидывает по два символа из строки
+
+class Not10FramesError(Exception):
+    def __str__(self):
+        return 'результат должен содержать 10 фреймов'
+
+
+class SpareError(Exception):
+    def __init__(self, first, second):
+        self.first = first
+        self.second = second
+
+    def __str__(self):
+        return f'символ spare на первой позиции в результате фрейма: {self.first}{self.second}'
+
+
 def get_score(game_result):
-    game_list = []
-    print(' Количество очков для результатов', game_result, end=' : ')
-    poz = 0
-    for _ in range(10):
-        if game_result[poz] == 'X':
-            frame_result = 'X'
-            poz += 1
-        else:
-            frame_result = game_result[poz] + game_result[poz + 1]
-            poz += 2
-        result = get_frame_score(frame_result)
-        game_list.append(result)
-        print(result, end=' ')
-    return game_list
-
-
-def get_frame_score(frame_result):
+    total_points = 0
+    mod_result = character_replacement(game_result)
     try:
-        check_frame_result(frame_result)
-        if frame_result == 'X':
-            result = 20
-        elif frame_result[1] == '/':
-            result = 15
-        elif frame_result[0] == '-':
-            if frame_result[1] == '-':
-                result = 0
+        check_game_result(mod_result)
+        poz = 0
+        while poz < len(mod_result) - 1:
+            first, second = mod_result[poz], mod_result[poz + 1]
+            check_frame_result(first, second)
+            if first == 'X':
+                points = 20
+            elif second == '/':
+                points = 15
             else:
-                result = int(frame_result[1])
+                points = int(first) + int(second)
+            total_points += points
+            poz += 2
+        print(f'Количество очков для результатов {game_result}: {total_points}')
+        return total_points
+    except (Not10FramesError, ValueError, SpareError) as exp:
+        print(exp)
+
+
+def character_replacement(result):
+    modified_result = ''
+    for symbol in result:
+        if symbol == 'X' or symbol == 'Х':
+            modified_result += 'X0'
+        elif symbol == '-':
+            modified_result += '0'
         else:
-            if frame_result[1] == '-':
-                result = int(frame_result[0])
-            else:
-                result = int(frame_result[0]) + int(frame_result[1])
-    except Exception as exp:
-        result = 0
-        print(exp, end=' ')
-    finally:
-        return result
+            modified_result += symbol
+    return modified_result
 
 
-def check_frame_result(res):
-    first_poz = '123456789-'
-    second_poz = '123456789/-'
-    if len(res) < 1 or len(res) > 2:
-        raise Exception(f'({res}:неверное количество позиций в результате)')
-    if len(res) == 1:
-        if res != 'X':
-            raise Exception(f'({res}:если одна позиция - только strike)')
-    else:
-        if res[0] not in first_poz:
-            raise Exception(f'({res}:1 позиция неверная)')
-        if res[1] not in second_poz:
-            raise Exception(f'({res}:2 позиция неверная)')
-        if res.isdigit() and int(res[0]) + int(res[1]) > 9:
-            raise Exception(f'({res}:сумма позиций больше 9)')
+def check_game_result(res):
+    valid_characters = '0123456789/X'
+    if len(res) != 20:
+        raise Not10FramesError()
+    for char in res:
+        if char not in valid_characters:
+            raise ValueError(f'недопустимый символ в результате: {char}')
+
+
+def check_frame_result(first_char, second_char):
+    if first_char == '/':
+        raise SpareError(first_char, second_char)
+    elif first_char.isdigit() and second_char.isdigit():
+        if int(first_char) + int(second_char) > 9:
+            raise ValueError(f'сумма позиций фрейма больше 9: {first_char}{second_char}')
