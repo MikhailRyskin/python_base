@@ -86,7 +86,10 @@ def get_score(game_result):
             poz += 2
         print(f'Количество очков для результатов {game_result}: {total_points}')
         return total_points
-    # TODO Зачем здесь ловить ошибки? если они есть лучше их пробросить дальше т.к в любом случае программа завершится
+    # Зачем здесь ловить ошибки? если они есть лучше их пробросить дальше т.к в любом случае программа завершится
+    # TODO не очень понял, где ловить ошибки? В 01_score? А в турнире тогда где ловить?
+    #  сейчас, как я понимаю, assertRaises в тестах не может работать, т.к. get_score не выбрасывает ошибки.
+
     except (Not10FramesError, ValueError, AttributeError, SpareError, StrikeError) as exp:
         print(exp)
         return str(exp)

@@ -8,6 +8,10 @@ class GetScoreTest(unittest.TestCase):
     #  Тестов должно быть минимум  8-10
     # TODO Для ловли исключений удобнее использовать "assertRaises"
     #  self.assertRaises(ValueError, get_score, 'rrrrrrrrrrrrrrrrrrrr')
+
+    # def test_value_error1(self):
+    #     self.assertRaises(ValueError, get_score, 'rrrrrrrrrrrrrrrrrrrr')
+
     def test_strike(self):
         result = get_score('XXXXXXXXXX')
         self.assertEqual(result, 200, 'не работает подсчёт strike')
