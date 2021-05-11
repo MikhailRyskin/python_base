@@ -1,4 +1,4 @@
-# TODO Создайте свои исключения, хотя бы пару
+#  Создайте свои исключения, хотя бы пару
 #  SpareError и StrikeError
 #  .
 #  Подсчет очков нужно доработать Примеры подсчета очков:
@@ -29,7 +29,7 @@
 # "Скрипт должен принимать параметр --result и печатать на консоль:
 #   Количество очков для результатов ХХХ - УУУ."
 # тут 3 икса и 3 игрека - полное впечатление, что нужно просто выводить количество очков для каждого фрейма
-# TODO Имеется ввиду что вводят "ХХХ" результатов бросков, а получаем "УУУ" количество очков.
+# Имеется ввиду что вводят "ХХХ" результатов бросков, а получаем "УУУ" количество очков.
 #  Отлично доработали, но при неверном некорректном вводе лучше выбрасывать исключения с сообщениями, а не "None"
 #  К примеру такие строки:
 #   - 'rrrrrrrrrrrrrrrrrrrr' выбрасываем исключение ValueError
@@ -56,11 +56,22 @@ class SpareError(Exception):
         return f'символ spare на первой позиции в результате фрейма: {self.first}{self.second}'
 
 
+class StrikeError(Exception):
+    def __init__(self, first, second):
+        self.first = first
+        self.second = second
+
+    def __str__(self):
+        return f'символ strike на второй позиции в результате фрейма: {self.first}{self.second}'
+
+
 def get_score(game_result):
     total_points = 0
+    game_result = game_result.replace('Х', 'X')
     mod_result = character_replacement(game_result)
     try:
-        check_game_result(mod_result)
+        check_game_result(game_result)
+        check_mod_result(mod_result)
         poz = 0
         while poz < len(mod_result) - 1:
             first, second = mod_result[poz], mod_result[poz + 1]
@@ -75,14 +86,15 @@ def get_score(game_result):
             poz += 2
         print(f'Количество очков для результатов {game_result}: {total_points}')
         return total_points
-    except (Not10FramesError, ValueError, SpareError) as exp:
+    except (Not10FramesError, ValueError, AttributeError, SpareError, StrikeError) as exp:
         print(exp)
+        return str(exp)
 
 
 def character_replacement(result):
     modified_result = ''
     for symbol in result:
-        if symbol == 'X' or symbol == 'Х':
+        if symbol == 'X':
             modified_result += 'X0'
         elif symbol == '-':
             modified_result += '0'
@@ -92,12 +104,25 @@ def character_replacement(result):
 
 
 def check_game_result(res):
-    valid_characters = '0123456789/X'
-    if len(res) != 20:
-        raise Not10FramesError()
+    valid_characters = '123456789-/X'
     for char in res:
         if char not in valid_characters:
             raise ValueError(f'недопустимый символ в результате: {char}')
+    was_already = 0
+    check_line = list(res)
+    number_of_x = check_line.count('X')
+    for _ in range(number_of_x):
+        strike_index = check_line.index('X')
+        check_index = was_already + strike_index
+        if check_index % 2 != 0:
+            raise StrikeError(res[strike_index - 1], res[strike_index])
+        was_already += 1
+        check_line[strike_index] = 0
+
+
+def check_mod_result(res):
+    if len(res) != 20:
+        raise Not10FramesError()
 
 
 def check_frame_result(first_char, second_char):
@@ -105,4 +130,4 @@ def check_frame_result(first_char, second_char):
         raise SpareError(first_char, second_char)
     elif first_char.isdigit() and second_char.isdigit():
         if int(first_char) + int(second_char) > 9:
-            raise ValueError(f'сумма позиций фрейма больше 9: {first_char}{second_char}')
+            raise AttributeError(f'сумма позиций фрейма больше 9: {first_char}{second_char}')
