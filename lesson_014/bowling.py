@@ -86,6 +86,7 @@ def get_score(game_result):
             poz += 2
         print(f'Количество очков для результатов {game_result}: {total_points}')
         return total_points
+    # TODO Зачем здесь ловить ошибки? если они есть лучше их пробросить дальше т.к в любом случае программа завершится
     except (Not10FramesError, ValueError, AttributeError, SpareError, StrikeError) as exp:
         print(exp)
         return str(exp)
