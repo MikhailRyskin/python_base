@@ -30,15 +30,16 @@
 import argparse
 from bowling_tournament import tour_winner
 
-
 parser = argparse.ArgumentParser(description='Консольный скрипт для формирования файла с результатами турнира.')
 parser.add_argument('--input', '-input', type=str, default='tournament.txt',
                     help='файл протокол турнира. По умолчанию: tournament.txt')
 parser.add_argument('--output', '-output', type=str, default='tournament_result.txt',
                     help='файл c результатами турнира. По умолчанию: tournament_result.txt')
+parser.add_argument('--inter', '-inter', type=str, default=False, help='Система подсчёта очков: по умолчанию - '
+                                                                       'российская, True - международная')
 args = parser.parse_args()
 try:
-    tour_winner(input_file=args.input, output_file=args.output)
+    tour_winner(input_file=args.input, output_file=args.output, inter=args.inter)
 except FileNotFoundError:
     print(f'файла протокола турнира {args.input} не существует')
 

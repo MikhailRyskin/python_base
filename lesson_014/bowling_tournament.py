@@ -1,7 +1,7 @@
 from bowling import get_score
 
 
-def tour_winner(input_file, output_file):
+def tour_winner(input_file, output_file, inter=False):
     with open(input_file, 'r', encoding='utf8') as in_file, \
             open(output_file, 'w', encoding='utf8') as out_file:
         points_name = {}
@@ -17,7 +17,7 @@ def tour_winner(input_file, output_file):
                     winner = points_name[max_points]
                     out_line = f'winner is {winner}\n'
                 else:
-                    result = get_score(line_list[1])
+                    result = get_score(line_list[1], inter=inter)
                     out_line = f'{line} {result}\n'
                     if isinstance(result, int):
                         points_name[result] = line_list[0]

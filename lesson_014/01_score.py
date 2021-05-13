@@ -73,13 +73,15 @@
 import argparse
 from bowling import get_score
 
-
 parser = argparse.ArgumentParser(description='Консольная утилита для подсчета очков в боулинге.')
 parser.add_argument('--result', '-result', type=str, help='Результаты бросков в боулинге -'
-                                ' строка с записью результатов 10 фреймов без символов-разделителей')
+                                                          'строка с записью результатов 10 фреймов без '
+                                                          'символов-разделителей')
+parser.add_argument('--inter', '-inter', type=str, default=False, help='Система подсчёта очков: по умолчанию -'
+                                                                       'российская, True - международная')
 args = parser.parse_args()
 if args.result:
-    get_score(game_result=args.result)
+    get_score(game_result=args.result, inter=args.inter)
 else:
     print('Введите результаты игры или воспользуйтесь --help или -h')
 

@@ -65,25 +65,16 @@ class StrikeError(Exception):
         return f'символ strike на второй позиции в результате фрейма: {self.first}{self.second}'
 
 
-def get_score(game_result):
-    total_points = 0
+def get_score(game_result, inter=False):
     game_result = game_result.replace('Х', 'X')
     mod_result = character_replacement(game_result)
     try:
         check_game_result(game_result)
         check_mod_result(mod_result)
-        poz = 0
-        while poz < len(mod_result) - 1:
-            first, second = mod_result[poz], mod_result[poz + 1]
-            check_frame_result(first, second)
-            if first == 'X':
-                points = 20
-            elif second == '/':
-                points = 15
-            else:
-                points = int(first) + int(second)
-            total_points += points
-            poz += 2
+        if inter:
+            total_points = scoring_inter(mod_result)
+        else:
+            total_points = scoring(mod_result)
         print(f'Количество очков для результатов {game_result}: {total_points}')
         return total_points
     # Зачем здесь ловить ошибки? если они есть лучше их пробросить дальше т.к в любом случае программа завершится
@@ -94,6 +85,74 @@ def get_score(game_result):
     except (Not10FramesError, ValueError, AttributeError, SpareError, StrikeError) as exp:
         print(exp)
         return str(exp)
+
+
+def scoring(mod_result):
+    total_points = 0
+    poz = 0
+    while poz < len(mod_result) - 1:
+        first, second = mod_result[poz], mod_result[poz + 1]
+        check_frame(first, second)
+        if first == 'X':
+            points = 20
+        elif second == '/':
+            points = 15
+        else:
+            points = int(first) + int(second)
+        total_points += points
+        poz += 2
+    return total_points
+
+
+def scoring_inter(mod_result):
+    check_all_frames(mod_result)
+    total_points = 0
+    poz = 0
+    not_last = True
+    not_penult = True
+    while poz < len(mod_result) - 1:
+        first, second = mod_result[poz], mod_result[poz + 1]
+        if first == 'X':
+            points = strike_points_inter(mod_result, not_last, not_penult, poz)
+        elif second == '/':
+            points = spare_points_inter(mod_result, not_last, poz)
+        else:
+            points = int(first) + int(second)
+        total_points += points
+        poz += 2
+        if poz == len(mod_result) - 4:
+            not_penult = False
+        if poz == len(mod_result) - 2:
+            not_last = False
+    return total_points
+
+
+def spare_points_inter(mod_result, not_last, poz):
+    points = 10
+    if not_last:
+        if mod_result[poz + 2] == 'X':
+            points += 10
+        else:
+            points += int(mod_result[poz + 2])
+    return points
+
+
+def strike_points_inter(mod_result, not_last, not_penult, poz):
+    points = 10
+    if not_last:
+        if mod_result[poz + 2] == 'X':
+            points += 10
+            if not_penult:
+                if mod_result[poz + 4] == 'X':
+                    points += 10
+                else:
+                    points += int(mod_result[poz + 4])
+        else:
+            if mod_result[poz + 3] == '/':
+                points += 10
+            else:
+                points += int(mod_result[poz + 2]) + int(mod_result[poz + 3])
+    return points
 
 
 def character_replacement(result):
@@ -130,9 +189,17 @@ def check_mod_result(res):
         raise Not10FramesError()
 
 
-def check_frame_result(first_char, second_char):
+def check_frame(first_char, second_char):
     if first_char == '/':
         raise SpareError(first_char, second_char)
     elif first_char.isdigit() and second_char.isdigit():
         if int(first_char) + int(second_char) > 9:
             raise AttributeError(f'сумма позиций фрейма больше 9: {first_char}{second_char}')
+
+
+def check_all_frames(mod_result):
+    poz = 0
+    while poz < len(mod_result) - 1:
+        first, second = mod_result[poz], mod_result[poz + 1]
+        check_frame(first, second)
+        poz += 2
