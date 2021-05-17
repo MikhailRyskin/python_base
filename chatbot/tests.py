@@ -29,7 +29,7 @@ class Test1(TestCase):
         long_poller_mock = Mock(return_value=events)
         long_poller_listen_mock = Mock()
         long_poller_listen_mock.listen = long_poller_mock
-
+        # TODO Дублировать "with" не нужно используйте перечисление
         with patch('bot.vk_api.VkApi'):
             with patch('bot.VkBotLongPoll', return_value=long_poller_listen_mock):
                 bot = Bot('', '')
@@ -41,6 +41,20 @@ class Test1(TestCase):
                 assert bot.on_event.call_count == count
 
     def test_on_event(self):
+        # TODO А остальная логика где потерялась? Также не хватает ожидаемых ответов от бота
+        #  Сначала создаем моки
+        #  - send_mock = Mock()
+        #  - api_mock = Mock()
+        #  И присваиваем отправки сообщения мок api_mock.messages.send = send_mock
+        #  .
+        #  Затем в цикле собираем список ожидаемых ответов и добавляем VkBotMessageEvent(текст)
+        #  И потом уже создаем мок для long poll, как в тесте выше, а в "return_value" передаем собранный список
+        #  .
+        #  Следующий шаг это сделать патч для VkBotLongPoll больше не нужно,
+        #  и в return_value уже передаем замоканый long poll
+        #  И внутри уже создаем бота запускаем его и добавляем ожидаемые ответы
+        #  .
+        #  И потом делаем сравнения с количество вызовов, и ожидаемы ответы с реальными
         event = VkBotMessageEvent(raw=self.RAW_EVENT)
 
         send_mock = Mock()
