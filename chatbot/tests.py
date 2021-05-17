@@ -48,7 +48,7 @@ class Test1(TestCase):
             with patch('bot.VkBotLongPoll'):
                 bot = Bot('', '')
                 bot.api = Mock()
-                bot.api.message.send = send_mock
+                bot.api.messages.send = send_mock
 
                 bot.on_event(event)
 
