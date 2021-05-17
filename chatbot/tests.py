@@ -29,9 +29,8 @@ class Test1(TestCase):
         long_poller_mock = Mock(return_value=events)
         long_poller_listen_mock = Mock()
         long_poller_listen_mock.listen = long_poller_mock
-        # TODO Дублировать "with" не нужно используйте перечисление
-        with patch('bot.vk_api.VkApi'):
-            with patch('bot.VkBotLongPoll', return_value=long_poller_listen_mock):
+        # Дублировать "with" не нужно используйте перечисление
+        with patch('bot.vk_api.VkApi'), patch('bot.VkBotLongPoll', return_value=long_poller_listen_mock):
                 bot = Bot('', '')
                 bot.on_event = Mock()
                 bot.run()
@@ -41,7 +40,7 @@ class Test1(TestCase):
                 assert bot.on_event.call_count == count
 
     def test_on_event(self):
-        # TODO А остальная логика где потерялась? Также не хватает ожидаемых ответов от бота
+        #  А остальная логика где потерялась? Также не хватает ожидаемых ответов от бота
         #  Сначала создаем моки
         #  - send_mock = Mock()
         #  - api_mock = Mock()
@@ -55,11 +54,12 @@ class Test1(TestCase):
         #  И внутри уже создаем бота запускаем его и добавляем ожидаемые ответы
         #  .
         #  И потом делаем сравнения с количество вызовов, и ожидаемы ответы с реальными
+
+        # TODO сейчас оба теста проходят. Тест на on_event сделан как показано в видео.
         event = VkBotMessageEvent(raw=self.RAW_EVENT)
 
         send_mock = Mock()
-        with patch('bot.vk_api.VkApi'):
-            with patch('bot.VkBotLongPoll'):
+        with patch('bot.vk_api.VkApi'), patch('bot.VkBotLongPoll'):
                 bot = Bot('', '')
                 bot.api = Mock()
                 bot.api.messages.send = send_mock
