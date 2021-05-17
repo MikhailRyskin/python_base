@@ -54,7 +54,7 @@ class Bot:
 
     def on_event(self, event):
         """
-        Отправляет сообщение назад, если это текст
+        Отправляет сообщение назад, если это текст.
         :param event: VkBotMessageEvent object
         :return:
         """
