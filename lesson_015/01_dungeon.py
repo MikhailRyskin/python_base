@@ -91,12 +91,26 @@
 #  ...
 #
 # и так далее...
+# Учитывая время и опыт, не забывайте о точности вычислений!
+# если изначально не писать число в виде строки - теряется точность!
+import json
+from decimal import Decimal
+from pprint import pprint
 
+from lesson_015.dungeon_engine import Dungeon
 
 remaining_time = '123456.0987654321'
-# если изначально не писать число в виде строки - теряется точность!
 field_names = ['current_location', 'current_experience', 'current_date']
+time_left = Decimal(remaining_time)
 
-# TODO тут ваш код
+with open('rpg.json', 'r') as read_file:
+    dungeon = json.load(read_file)
+pprint(dungeon)
+first_location_name = 'Location_0_tm0'
+first_location = dungeon[first_location_name]
+dungeon = Dungeon(first_location_name, first_location)
 
-# Учитывая время и опыт, не забывайте о точности вычислений!
+while not dungeon.game_over:
+    dungeon.act()
+    if dungeon.revival:
+        dungeon = Dungeon(first_location_name, first_location)
