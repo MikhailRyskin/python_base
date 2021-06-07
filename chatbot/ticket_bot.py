@@ -20,7 +20,7 @@ def configure_logging():
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(logging.Formatter('%(levelname)s %(message)s'))
     log.addHandler(stream_handler)
-    stream_handler.setLevel(logging.INFO)
+    stream_handler.setLevel(logging.ERROR)
 
     file_handler = logging.FileHandler(filename='bot.log', encoding='UTF-8')
     file_handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)s %(message)s', datefmt='%d-%m-%y %H:%M'))
@@ -45,7 +45,12 @@ class TicketBot:
     поддерживает запрос помощи и сценарий запроса билетов:
     -запрос места отправления
     -запрос места прибытия
-    - ....
+    -запрос даты
+    -выдача 5 ближайших рейсов и запрос выбора рейса из них
+    -запрос количества билетов
+    -возможный комментарий
+    -запрос подтверждение введённых данных
+    -запрос номера телефона
     -сообщение об успешном заказе
     Если шаг не пройден, новый запрос до успешного прохождения
     """
@@ -71,7 +76,7 @@ class TicketBot:
 
     def on_event(self, event):
         """
-        Отправляет сообщение назад, если это текст.
+        Отправляет сообщение в ответ на ввод пользователя в соответствии со сценарием
         :param event: VkBotMessageEvent object
         :return:
         """
@@ -81,22 +86,17 @@ class TicketBot:
         user_id = event.object['message']['peer_id']
         text = event.object['message']['text']
         text = text.lower()
-        if user_id in self.user_states:
+
+        if text == '/ticket':
+            self.exit_scenario(user_id)
+            text_to_send = self.start_scenario(user_id, 'booking')
+        elif text == '/help':
+            self.exit_scenario(user_id)
+            text_to_send = ticket_settings.HELP_ANSWER
+        elif user_id in self.user_states:
             text_to_send = self.continue_scenario(user_id, text)
         else:
-            # search intent
-            # for intent in ticket_settings.INTENTS:
-            #     if any(token in text.lower() for token in intent['tokens']):
-            #         log.debug(f'User gets {intent}')
-            #         if intent['answer']:
-            #             text_to_send = intent['answer']
-            #         else:
-            #             text_to_send = self.start_scenario(user_id, intent['scenario'])
-            #         break
-            if text == '/ticket':
-                text_to_send = self.start_scenario(user_id, 'booking')
-            else:
-                text_to_send = ticket_settings.HELP_ANSWER
+            text_to_send = ticket_settings.HELP_ANSWER
 
         self.api.messages.send(
             message=text_to_send,
@@ -122,19 +122,21 @@ class TicketBot:
             # next_step
             next_step = step['next_step']
             text_to_send = steps[next_step]['text'].format(**state.context)
-            # text_to_send = steps[next_step]['text']
             if steps[next_step]['next_step']:
                 # switch to next step
                 state.step_name = step['next_step']
             else:
                 # finish scenario
-                print('Ура, заказали!!!')
-                # log.info('Зарегистрирован {name} {email}'.format(**state.context))
+                log.info('заказан билет: {departure} {destination} {date} {flight} {seats}'.format(**state.context))
                 self.user_states.pop(user_id)
         else:
             # retry current step
             text_to_send = step['failure_text'].format(**state.context)
         return text_to_send
+
+    def exit_scenario(self, user_id):
+        if user_id in self.user_states:
+            self.user_states.pop(user_id)
 
 
 if __name__ == '__main__':
