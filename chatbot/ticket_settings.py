@@ -24,20 +24,20 @@ SCENARIOS = {
         'first_step': 'step1',
         'steps': {
             'step1': {
-                'text': 'Введите город отправления',
+                'text': 'Введите город отправления.',
                 'failure_text': 'Из этого города нет рейсов. Список возможных городов: {cities_list}.',
                 'handler': 'handle_departure',
                 'next_step': 'step2'
             },
             'step2': {
-                'text': 'Введите город назначения',
+                'text': 'Введите город назначения.',
                 'failure_text': 'В этот город нет рейсов. Начните заказ заново.',
                 'handler': 'handle_destination',
                 'next_step': 'step3'
             },
             'step3': {
                 'text': 'Введите дату полёта в формате дд-мм-гггг.',
-                'failure_text': 'Некорректная дата, попробуйте ещё раз.',
+                'failure_text': 'Некорректный формат даты или дата меньше текущей.',
                 'handler': 'handle_date',
                 'next_step': 'step4'
             },
@@ -54,20 +54,20 @@ SCENARIOS = {
                 'next_step': 'step6'
             },
             'step6': {
-                'text': 'Дополнительные комментарии (необязательно).',
+                'text': 'Дополнительные комментарии (или "нет").',
                 'failure_text': 'Некорректный комментарий.',
                 'handler': 'handle_comment',
                 'next_step': 'step7'
             },
             'step7': {
-                'text': 'Подтвердите заказ:\n откуда: {departure} куда: {destination} дата: {date} рейс: {flight} '
-                        'мест: {seats} комментарий: {comment}.',
-                'failure_text': 'Только да или нет.',
+                'text': 'Подтвердите заказ:\nоткуда: {departure} куда: {destination} дата и рейс: {flight} '
+                        'мест: {seats} комментарий: {comment}.\nДля подтверждения введите "да".',
+                'failure_text': 'Начните заказ заново.',
                 'handler': 'handle_confirm',
                 'next_step': 'step8'
             },
             'step8': {
-                'text': 'Введите номер телефона для связи.',
+                'text': 'Заказ подтверждён. Введите номер телефона для связи.',
                 'failure_text': 'Неверный формат номера телефона. Попробуйте ещё раз.',
                 'handler': 'handle_phone',
                 'next_step': 'step9'

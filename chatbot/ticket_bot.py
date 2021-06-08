@@ -127,11 +127,13 @@ class TicketBot:
                 state.step_name = step['next_step']
             else:
                 # finish scenario
-                log.info('заказан билет: {departure} {destination} {date} {flight} {seats}'.format(**state.context))
+                log.info('заказан билет: {departure} {destination} {flight} {seats}'.format(**state.context))
                 self.user_states.pop(user_id)
         else:
             # retry current step
             text_to_send = step['failure_text'].format(**state.context)
+            if state.context['break-scenario']:
+                self.user_states.pop(user_id)
         return text_to_send
 
     def exit_scenario(self, user_id):
