@@ -56,6 +56,8 @@ def handle_date(text, context):
 
 
 def dispatcher(date, context):
+    # TODO Здесь собираете список из билетов все отлично, но зачем пользователю отдавать ег ов виде списка?
+    #  Преобразуйте в строки с переносами "\n".
     all_flights_list = SCHEDULE[context['departure']][context['destination']]
     for index, flight in enumerate(all_flights_list):
         if flight[:10] >= date:
