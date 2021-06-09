@@ -5,7 +5,7 @@ import logging
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 
-from chatbot import ticket_handlers
+from chatbot import ticket_handlers, intents
 
 try:
     import ticket_settings
@@ -92,11 +92,11 @@ class TicketBot:
             text_to_send = self.start_scenario(user_id, 'booking')
         elif text == '/help':
             self.exit_scenario(user_id)
-            text_to_send = ticket_settings.HELP_ANSWER
+            text_to_send = intents.HELP_ANSWER
         elif user_id in self.user_states:
             text_to_send = self.continue_scenario(user_id, text)
         else:
-            text_to_send = ticket_settings.HELP_ANSWER
+            text_to_send = intents.HELP_ANSWER
 
         self.api.messages.send(
             message=text_to_send,
@@ -105,7 +105,7 @@ class TicketBot:
         )
 
     def start_scenario(self, user_id, scenario_name):
-        scenario = ticket_settings.SCENARIOS[scenario_name]
+        scenario = intents.SCENARIOS[scenario_name]
         first_step = scenario['first_step']
         step = scenario['steps'][first_step]
         text_to_send = step['text']
@@ -114,7 +114,7 @@ class TicketBot:
 
     def continue_scenario(self, user_id, text):
         state = self.user_states[user_id]
-        steps = ticket_settings.SCENARIOS[state.scenario_name]['steps']
+        steps = intents.SCENARIOS[state.scenario_name]['steps']
         #  continue scenario
         step = steps[state.step_name]
         handler = getattr(ticket_handlers, step['handler'])

@@ -5,7 +5,7 @@ from unittest.mock import patch, Mock
 from vk_api.bot_longpoll import VkBotMessageEvent
 
 from bot import Bot
-from chatbot import settings
+from regbot import settings
 
 
 class Test1(TestCase):

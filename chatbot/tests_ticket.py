@@ -5,7 +5,7 @@ from unittest.mock import patch, Mock
 from vk_api.bot_longpoll import VkBotMessageEvent
 
 from ticket_bot import TicketBot
-from chatbot import ticket_settings
+from chatbot import intents
 
 
 class Test1(TestCase):
@@ -54,23 +54,21 @@ class Test1(TestCase):
         '9217777777',
     ]
     EXPECTED_OUTPUTS = [
-        ticket_settings.HELP_ANSWER,
-        ticket_settings.SCENARIOS['booking']['steps']['step1']['text'],
-        ticket_settings.SCENARIOS['booking']['steps']['step2']['text'],
-        ticket_settings.SCENARIOS['booking']['steps']['step3']['text'],
-        ticket_settings.SCENARIOS['booking']['steps']['step3']['failure_text'],
-        ticket_settings.SCENARIOS['booking']['steps']['step4']['text'].format(flights=['1. 21-06-2021 20-40 мп02',
-                                                                                       '2. 23-06-2021 12-15 мп03',
-                                                                                       '3. 23-06-2021 18-20 мп04',
-                                                                                       '4. 23-06-2021 23-20 мп05',
-                                                                                       '5. 24-06-2021 07-20 мп06']),
-        ticket_settings.SCENARIOS['booking']['steps']['step5']['text'],
-        ticket_settings.SCENARIOS['booking']['steps']['step6']['text'],
-        ticket_settings.SCENARIOS['booking']['steps']['step7']['text'].format(departure='москва', destination='париж',
-                                                                              flight='23-06-2021 18-20 мп04', seats='2',
-                                                                              comment='очень нужны билеты'),
-        ticket_settings.SCENARIOS['booking']['steps']['step8']['text'],
-        ticket_settings.SCENARIOS['booking']['steps']['step9']['text'].format(phone='9217777777'),
+        intents.HELP_ANSWER,
+        intents.SCENARIOS['booking']['steps']['step1']['text'],
+        intents.SCENARIOS['booking']['steps']['step2']['text'],
+        intents.SCENARIOS['booking']['steps']['step3']['text'],
+        intents.SCENARIOS['booking']['steps']['step3']['failure_text'],
+        intents.SCENARIOS['booking']['steps']['step4']['text'].format(
+            flights5='1. 21-06-2021 20-40 мп02\n2. 23-06-2021 12-15 мп03\n3. 23-06-2021 18-20 мп04\n'
+                     '4. 23-06-2021 23-20 мп05\n5. 24-06-2021 07-20 мп06\n'),
+        intents.SCENARIOS['booking']['steps']['step5']['text'],
+        intents.SCENARIOS['booking']['steps']['step6']['text'],
+        intents.SCENARIOS['booking']['steps']['step7']['text'].format(departure='москва', destination='париж',
+                                                                      flight='23-06-2021 18-20 мп04', seats='2',
+                                                                      comment='очень нужны билеты'),
+        intents.SCENARIOS['booking']['steps']['step8']['text'],
+        intents.SCENARIOS['booking']['steps']['step9']['text'].format(phone='9217777777'),
     ]
 
     def test_run_ok(self):

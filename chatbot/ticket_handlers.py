@@ -4,7 +4,7 @@
 import datetime
 import re
 from schedule import SCHEDULE
-from ticket_settings import RE_CITIES
+from intents import RE_CITIES
 
 
 def change_city_name(text):
@@ -24,7 +24,10 @@ def handle_departure(text, context):
         context['departure'] = text
         return True
     else:
-        context['cities_list'] = list(SCHEDULE.keys())
+        cities = ''
+        for city in SCHEDULE.keys():
+            cities += city + '\n'
+        context['cities_list'] = cities
         return False
 
 
@@ -47,7 +50,7 @@ def handle_date(text, context):
         today = datetime.datetime.combine(today_date, temp)
         input_date = datetime.datetime.strptime(text, '%d-%m-%Y')
         if input_date >= today:
-            dispatcher(text, context)
+            dispatcher(input_date, context)
             return True
         else:
             return False
@@ -56,27 +59,29 @@ def handle_date(text, context):
 
 
 def dispatcher(date, context):
-    # TODO Здесь собираете список из билетов все отлично, но зачем пользователю отдавать ег ов виде списка?
+    #  Здесь собираете список из билетов все отлично, но зачем пользователю отдавать ег ов виде списка?
     #  Преобразуйте в строки с переносами "\n".
     all_flights_list = SCHEDULE[context['departure']][context['destination']]
     for index, flight in enumerate(all_flights_list):
-        if flight[:10] >= date:
+        flight_date = datetime.datetime.strptime(flight[:10], '%d-%m-%Y')
+        if flight_date >= date:
             date_index = index
             break
     flights_list = []
     for flight in all_flights_list[date_index: date_index + 5]:
         flights_list.append(flight)
-    flights5 = []
+    context['flights'] = flights_list
+    flights5 = ''
     for number in range(5):
-        flight_output = str(number + 1) + '. ' + flights_list[number]
-        flights5.append(flight_output)
-    context['flights'] = flights5
+        flight_output = str(number + 1) + '. ' + flights_list[number] + '\n'
+        flights5 += flight_output
+    context['flights5'] = flights5
 
 
 def handle_flights(text, context):
     choice = int(text)
     if 1 <= choice <= 5:
-        context['flight'] = context['flights'][choice - 1][3:]
+        context['flight'] = context['flights'][choice - 1]
         return True
     else:
         return False

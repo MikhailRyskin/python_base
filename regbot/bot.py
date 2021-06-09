@@ -5,7 +5,7 @@ import logging
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 
-from chatbot import handlers
+from regbot import handlers
 
 try:
     import settings
