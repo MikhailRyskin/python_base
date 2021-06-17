@@ -4,8 +4,10 @@ import logging
 
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
+from pony.orm import db_session
 
 from chatbot import ticket_handlers, intents
+from models import UserState, TicketInfo
 
 try:
     import ticket_settings
@@ -30,12 +32,12 @@ def configure_logging():
     log.setLevel(logging.DEBUG)
 
 
-class UserState:
-    """ Состояние пользователя внутри сценария."""
-    def __init__(self, scenario_name, step_name, context=None):
-        self.scenario_name = scenario_name
-        self.step_name = step_name
-        self.context = context or {}
+# class UserState:
+#     """ Состояние пользователя внутри сценария."""
+#     def __init__(self, scenario_name, step_name, context=None):
+#         self.scenario_name = scenario_name
+#         self.step_name = step_name
+#         self.context = context or {}
 
 
 class TicketBot:
@@ -64,7 +66,7 @@ class TicketBot:
         self.vk = vk_api.VkApi(token=self.token)
         self.long_poller = VkBotLongPoll(vk=self.vk, group_id=self.group_id)
         self.api = self.vk.get_api()
-        self.user_states = dict()  # user_id : user state
+        # self.user_states = dict()  # user_id : user state
 
     def run(self):
         """Запуск бота."""
@@ -74,6 +76,7 @@ class TicketBot:
             except Exception:
                 log.exception('ошибка в обработке события')
 
+    @db_session
     def on_event(self, event):
         """
         Отправляет сообщение в ответ на ввод пользователя в соответствии со сценарием
@@ -86,15 +89,15 @@ class TicketBot:
         user_id = event.object['message']['peer_id']
         text = event.object['message']['text']
         text = text.lower()
-
+        state = UserState.get(user_id=str(user_id))
         if text == '/ticket':
-            self.exit_scenario(user_id)
+            self.exit_scenario(state)
             text_to_send = self.start_scenario(user_id, 'booking')
         elif text == '/help':
-            self.exit_scenario(user_id)
+            self.exit_scenario(state)
             text_to_send = intents.HELP_ANSWER
-        elif user_id in self.user_states:
-            text_to_send = self.continue_scenario(user_id, text)
+        elif state is not None:
+            text_to_send = self.continue_scenario(text, state)
         else:
             text_to_send = intents.HELP_ANSWER
 
@@ -109,11 +112,10 @@ class TicketBot:
         first_step = scenario['first_step']
         step = scenario['steps'][first_step]
         text_to_send = step['text']
-        self.user_states[user_id] = UserState(scenario_name=scenario_name, step_name=first_step)
+        UserState(user_id=str(user_id), scenario_name=scenario_name, step_name=first_step, context={})
         return text_to_send
 
-    def continue_scenario(self, user_id, text):
-        state = self.user_states[user_id]
+    def continue_scenario(self, text, state):
         steps = intents.SCENARIOS[state.scenario_name]['steps']
         #  continue scenario
         step = steps[state.step_name]
@@ -128,17 +130,19 @@ class TicketBot:
             else:
                 # finish scenario
                 log.info('заказан билет: {departure} {destination} {flight} {seats}'.format(**state.context))
-                self.user_states.pop(user_id)
+                TicketInfo(departure=state.context['departure'], destination=state.context['destination'],
+                           flight=state.context['flight'], seats=state.context['seats'])
+                state.delete()
         else:
             # retry current step
             text_to_send = step['failure_text'].format(**state.context)
             if state.context['break-scenario']:
-                self.user_states.pop(user_id)
+                state.delete()
         return text_to_send
 
-    def exit_scenario(self, user_id):
-        if user_id in self.user_states:
-            self.user_states.pop(user_id)
+    def exit_scenario(self, state):
+        if state is not None:
+            state.delete()
 
 
 if __name__ == '__main__':
