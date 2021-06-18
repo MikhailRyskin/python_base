@@ -1,11 +1,17 @@
+from io import BytesIO
+
+import requests
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 
 TICKET_TEMPLATE = 'files/reg_template.jpg'
+
 TEXT_COLOR = ImageColor.colormap['blue']
 FONT_PATH = 'files/Arial_Cyr.ttf'
 FONT_SIZE = 20
+
 NAME_POZ = (165, 265)
 EMAIL_POZ = (165, 330)
+AVATAR_OFFSET = (50, 280)
 
 
 def generate_ticket(name, email):
@@ -17,7 +23,21 @@ def generate_ticket(name, email):
     for info in coord_texts:
         draw.text(info['coord'], info['text'], font=font, fill=TEXT_COLOR)
 
-    ticket_image.save('ticket.png')
+    response = requests.get(url='https://www.gravatar.com/avatar/HASH')
+    avatar_like_file = BytesIO(response.content)
+    avatar = Image.open(avatar_like_file)
+    ticket_image.paste(avatar, AVATAR_OFFSET)
+
+    # with open('files/ticket_example.png', 'wb') as f:
+    #     ticket_image.save(f, 'png')
+    temp_file = BytesIO()
+    ticket_image.save(temp_file, 'png')
+    temp_file.seek(0)
+
+    return temp_file
 
 
-generate_ticket('Михаил', 'tt23@mail.gv')
+
+
+# rez = generate_ticket('Михаил', 'tt23@mail.gv')
+# print(rez)

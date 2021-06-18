@@ -1,4 +1,6 @@
+import requests
 from PIL import Image, ImageDraw, ImageFont, ImageColor
+from io import BytesIO
 
 TICKET_TEMPLATE = 'files/tt.png'
 TEXT_COLOR = ImageColor.colormap['blue']
@@ -8,6 +10,7 @@ DEPARTURE_POZ = (380, 150)
 DESTINATION_POZ = (380, 210)
 FLIGHT_POZ = (380, 270)
 SEATS_POZ = (380, 330)
+AVATAR_OFFSET = (50, 230)
 
 
 def generate_ticket(departure, destination, flight, seats):
@@ -20,7 +23,20 @@ def generate_ticket(departure, destination, flight, seats):
     for info in coord_texts:
         draw.text(info['coord'], info['text'], font=font, fill=TEXT_COLOR)
 
-    ticket_image.save('ticket.png')
+    response = requests.get(url='https://www.gravatar.com/avatar/HASH')
+    avatar_like_file = BytesIO(response.content)
+    avatar = Image.open(avatar_like_file)
+    ticket_image.paste(avatar, AVATAR_OFFSET)
+
+    temp_file = BytesIO()
+    ticket_image.save(temp_file, 'png')
+    temp_file.seek(0)
+
+    return temp_file
+
+    # with open('files/ticket_example.png', 'wb') as f:
+    #     ticket_image.save(f, 'png')
 
 
-generate_ticket('Лондон', 'Брюгге', '23-06-2021 18-20 мп04', '4')
+# rez = generate_ticket('Лондон', 'Брюгге', '23-06-2021 18-20 мп04', '4')
+# print(rez)

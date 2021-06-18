@@ -71,6 +71,7 @@ SCENARIOS = {
             },
             'step9': {
                 'text': 'Спасибо за заказ. Мы свяжемся с Вами по номеру {phone} в ближайшее время.',
+                'image': 'generate_ticket_handler',
                 'failure_text': None,
                 'handler': None,
                 'next_step': None

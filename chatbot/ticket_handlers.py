@@ -3,6 +3,8 @@
 # True если шаг пройден, False если данные введены неправильно
 import datetime
 import re
+
+from chatbot.generate_ticket import generate_ticket
 from schedule import SCHEDULE
 from intents import RE_CITIES
 
@@ -115,3 +117,8 @@ def handle_phone(text, context):
         return True
     else:
         return False
+
+
+def generate_ticket_handler(text, context):
+    return generate_ticket(departure=context['departure'], destination=context['destination'],
+                           flight=context['flight'], seats=context['seats'])

@@ -7,6 +7,7 @@ from vk_api.bot_longpoll import VkBotMessageEvent
 
 from bot import Bot
 from regbot import settings
+from regbot.generate_ticket import generate_ticket
 
 
 def isolate_db(test_func):
@@ -40,7 +41,6 @@ class Test1(TestCase):
         long_poller_mock = Mock(return_value=events)
         long_poller_listen_mock = Mock()
         long_poller_listen_mock.listen = long_poller_mock
-        # Дублировать "with" не нужно используйте перечисление
         with patch('bot.vk_api.VkApi'), patch('bot.VkBotLongPoll', return_value=long_poller_listen_mock):
             bot = Bot('', '')
             bot.on_event = Mock()
@@ -49,39 +49,6 @@ class Test1(TestCase):
             bot.on_event.assert_called()
             bot.on_event.assert_any_call(obj)
             assert bot.on_event.call_count == count
-
-    # def test_on_event(self):
-    #     #  А остальная логика где потерялась? Также не хватает ожидаемых ответов от бота
-    #     #  Сначала создаем моки
-    #     #  - send_mock = Mock()
-    #     #  - api_mock = Mock()
-    #     #  И присваиваем отправки сообщения мок api_mock.messages.send = send_mock
-    #     #  .
-    #     #  Затем в цикле собираем список ожидаемых ответов и добавляем VkBotMessageEvent(текст)
-    #     #  И потом уже создаем мок для long poll, как в тесте выше, а в "return_value" передаем собранный список
-    #     #  .
-    #     #  Следующий шаг это сделать патч для VkBotLongPoll больше не нужно,
-    #     #  и в return_value уже передаем замоканый long poll
-    #     #  И внутри уже создаем бота запускаем его и добавляем ожидаемые ответы
-    #     #  .
-    #     #  И потом делаем сравнения с количество вызовов, и ожидаемы ответы с реальными
-    #
-    #     # сейчас оба теста проходят. Тест на on_event сделан как показано в видео.
-    #     event = VkBotMessageEvent(raw=self.RAW_EVENT)
-    #
-    #     send_mock = Mock()
-    #     with patch('bot.vk_api.VkApi'), patch('bot.VkBotLongPoll'):
-    #             bot = Bot('', '')
-    #             bot.api = Mock()
-    #             bot.api.messages.send = send_mock
-    #
-    #             bot.on_event(event)
-    #
-    #     send_mock.assert_called_once_with(
-    #         message='это эхо: ' + self.RAW_EVENT['object']['message']['text'],
-    #         random_id=ANY,
-    #         peer_id=self.RAW_EVENT['object']['message']['peer_id']
-    #     )
 
     INPUTS = [
         'Привет',
@@ -129,3 +96,16 @@ class Test1(TestCase):
             args, kwargs = call
             real_outputs.append(kwargs['message'])
         assert real_outputs == self.EXPECTED_OUTPUTS
+        
+    def test_image_generation(self):
+        with open('files/ava.jpg', 'rb') as avatar_file:
+            avatar_mock = Mock()
+            avatar_mock.content = avatar_file.read()
+
+        with patch('requests.get', return_value=avatar_mock):
+            ticket_file = generate_ticket('Михаил', 'tt23@mail.gv')
+
+        with open('files/ticket_example.png', 'rb') as expected_file:
+            expected_bytes = expected_file.read()
+
+        assert ticket_file.read() == expected_bytes

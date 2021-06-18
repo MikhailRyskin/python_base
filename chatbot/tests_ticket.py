@@ -5,6 +5,7 @@ from unittest.mock import patch, Mock
 from pony.orm import db_session, rollback
 from vk_api.bot_longpoll import VkBotMessageEvent
 
+from chatbot.generate_ticket import generate_ticket
 from ticket_bot import TicketBot
 from chatbot import intents
 
@@ -107,3 +108,16 @@ class Test1(TestCase):
             args, kwargs = call
             real_outputs.append(kwargs['message'])
         assert real_outputs == self.EXPECTED_OUTPUTS
+
+    def test_image_generation(self):
+        with open('files/ava.jpg', 'rb') as avatar_file:
+            avatar_mock = Mock()
+            avatar_mock.content = avatar_file.read()
+
+        with patch('requests.get', return_value=avatar_mock):
+            ticket_file = generate_ticket('Лондон', 'Брюгге', '23-06-2021 18-20 мп04', '4')
+
+        with open('files/ticket_example.png', 'rb') as expected_file:
+            expected_bytes = expected_file.read()
+
+        assert ticket_file.read() == expected_bytes
