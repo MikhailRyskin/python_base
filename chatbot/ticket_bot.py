@@ -2,6 +2,7 @@
 import random
 import logging
 
+import requests
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from pony.orm import db_session
@@ -32,14 +33,6 @@ def configure_logging():
     log.setLevel(logging.DEBUG)
 
 
-# class UserState:
-#     """ Состояние пользователя внутри сценария."""
-#     def __init__(self, scenario_name, step_name, context=None):
-#         self.scenario_name = scenario_name
-#         self.step_name = step_name
-#         self.context = context or {}
-
-
 class TicketBot:
     """
     Bot заказа билетов для vk.com
@@ -66,7 +59,6 @@ class TicketBot:
         self.vk = vk_api.VkApi(token=self.token)
         self.long_poller = VkBotLongPoll(vk=self.vk, group_id=self.group_id)
         self.api = self.vk.get_api()
-        # self.user_states = dict()  # user_id : user state
 
     def run(self):
         """Запуск бота."""
@@ -92,39 +84,60 @@ class TicketBot:
         state = UserState.get(user_id=str(user_id))
         if text == '/ticket':
             self.exit_scenario(state)
-            text_to_send = self.start_scenario(user_id, 'booking')
+            self.start_scenario(user_id, 'booking', text)
         elif text == '/help':
             self.exit_scenario(state)
-            text_to_send = intents.HELP_ANSWER
+            self.send_text(intents.HELP_ANSWER, user_id)
         elif state is not None:
-            text_to_send = self.continue_scenario(text, state)
+            self.continue_scenario(text, state, user_id)
         else:
-            text_to_send = intents.HELP_ANSWER
+            self.send_text(intents.HELP_ANSWER, user_id)
 
+    def send_image(self, image, user_id):
+        upload_url = self.api.photos.getMessagesUploadServer()['upload_url']
+        upload_data = requests.post(url=upload_url, files={'photo': ('image.png', image, 'image.png')}).json()
+        image_data = self.api.photos.saveMessagesPhoto(**upload_data)
+
+        owner_id = image_data[0]['owner_id']
+        media_id = image_data[0]['id']
+        attachment = f'photo{owner_id}_{media_id}'
+
+        self.api.messages.send(
+            attachment=attachment,
+            random_id=random.randint(0, 2 ** 20),
+            peer_id=user_id)
+
+    def send_text(self, text_to_send, user_id):
         self.api.messages.send(
             message=text_to_send,
             random_id=random.randint(0, 2 ** 20),
-            peer_id=user_id
-        )
+            peer_id=user_id)
 
-    def start_scenario(self, user_id, scenario_name):
+    def send_step(self, step, user_id, text, context):
+        if 'text' in step:
+            self.send_text(step['text'].format(**context), user_id)
+        if 'image' in step:
+            handler = getattr(ticket_handlers, step['image'])
+            image = handler(text, context)
+            self.send_image(image, user_id)
+
+    def start_scenario(self, user_id, scenario_name, text):
         scenario = intents.SCENARIOS[scenario_name]
         first_step = scenario['first_step']
         step = scenario['steps'][first_step]
-        text_to_send = step['text']
+        self.send_step(step, user_id, text, context={})
         UserState(user_id=str(user_id), scenario_name=scenario_name, step_name=first_step, context={})
-        return text_to_send
 
-    def continue_scenario(self, text, state):
+    def continue_scenario(self, text, state, user_id):
         steps = intents.SCENARIOS[state.scenario_name]['steps']
         #  continue scenario
         step = steps[state.step_name]
         handler = getattr(ticket_handlers, step['handler'])
         if handler(text=text, context=state.context):
             # next_step
-            next_step = step['next_step']
-            text_to_send = steps[next_step]['text'].format(**state.context)
-            if steps[next_step]['next_step']:
+            next_step = steps[step['next_step']]
+            self.send_step(next_step, user_id, text, state.context)
+            if next_step['next_step']:
                 # switch to next step
                 state.step_name = step['next_step']
             else:
@@ -135,10 +148,9 @@ class TicketBot:
                 state.delete()
         else:
             # retry current step
-            text_to_send = step['failure_text'].format(**state.context)
+            self.send_text(step['failure_text'].format(**state.context), user_id)
             if state.context['break-scenario']:
                 state.delete()
-        return text_to_send
 
     def exit_scenario(self, state):
         if state is not None:

@@ -2,7 +2,7 @@ import requests
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 from io import BytesIO
 
-TICKET_TEMPLATE = 'files/tt.png'
+TICKET_TEMPLATE = 'files/t_template.jpg'
 TEXT_COLOR = ImageColor.colormap['blue']
 FONT_PATH = 'files/Arial_Cyr.ttf'
 FONT_SIZE = 16
@@ -19,7 +19,7 @@ def generate_ticket(departure, destination, flight, seats):
     draw = ImageDraw.Draw(ticket_image)
     font = ImageFont.truetype(font=FONT_PATH, size=FONT_SIZE)
     coord_texts = [{'coord': DEPARTURE_POZ, 'text': departure}, {'coord': DESTINATION_POZ, 'text': destination},
-                   {'coord': FLIGHT_POZ, 'text': flight}, {'coord': SEATS_POZ, 'text': seats}]
+                   {'coord': FLIGHT_POZ, 'text': flight}, {'coord': SEATS_POZ, 'text': str(seats)}]
     for info in coord_texts:
         draw.text(info['coord'], info['text'], font=font, fill=TEXT_COLOR)
 
@@ -33,10 +33,3 @@ def generate_ticket(departure, destination, flight, seats):
     temp_file.seek(0)
 
     return temp_file
-
-    # with open('files/ticket_example.png', 'wb') as f:
-    #     ticket_image.save(f, 'png')
-
-
-# rez = generate_ticket('Лондон', 'Брюгге', '23-06-2021 18-20 мп04', '4')
-# print(rez)

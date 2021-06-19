@@ -28,15 +28,15 @@ def generate_ticket(name, email):
     avatar = Image.open(avatar_like_file)
     ticket_image.paste(avatar, AVATAR_OFFSET)
 
-    # with open('files/ticket_example.png', 'wb') as f:
-    #     ticket_image.save(f, 'png')
+
     temp_file = BytesIO()
     ticket_image.save(temp_file, 'png')
     temp_file.seek(0)
 
     return temp_file
 
-
+    # with open('files/ticket_example.png', 'wb') as f:
+    #     ticket_image.save(f, 'png')
 
 
 # rez = generate_ticket('Михаил', 'tt23@mail.gv')
