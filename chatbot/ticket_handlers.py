@@ -72,6 +72,7 @@ def dispatcher(date, context):
         flights_list.append(flight)
     context['flights'] = flights_list
     flights5 = ''
+    # TODO Может вывалится с ошибкой неверного индекса
     for number in range(5):
         flight_output = str(number + 1) + '. ' + flights_list[number] + '\n'
         flights5 += flight_output
