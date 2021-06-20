@@ -52,8 +52,10 @@ def handle_date(text, context):
         today = datetime.datetime.combine(today_date, temp)
         input_date = datetime.datetime.strptime(text, '%d-%m-%Y')
         if input_date >= today:
-            dispatcher(input_date, context)
-            return True
+            if dispatcher(input_date, context):
+                return True
+            else:
+                return False
         else:
             return False
     else:
@@ -67,21 +69,28 @@ def dispatcher(date, context):
         if flight_date >= date:
             date_index = index
             break
+    else:
+        return False
     flights_list = []
-    for flight in all_flights_list[date_index: date_index + 5]:
+    number_of_flights = 0
+    for flight in all_flights_list[date_index:]:
         flights_list.append(flight)
+        number_of_flights += 1
+        if number_of_flights == 5:
+            break
     context['flights'] = flights_list
     flights5 = ''
-    # TODO Может вывалится с ошибкой неверного индекса
-    for number in range(5):
+    #  Может вывалится с ошибкой неверного индекса
+    for number in range(number_of_flights):
         flight_output = str(number + 1) + '. ' + flights_list[number] + '\n'
         flights5 += flight_output
     context['flights5'] = flights5
+    return True
 
 
 def handle_flights(text, context):
     choice = int(text)
-    if 1 <= choice <= 5:
+    if 1 <= choice <= len(context['flights']):
         context['flight'] = context['flights'][choice - 1]
         return True
     else:
