@@ -5,8 +5,13 @@ import datetime
 from bs4 import BeautifulSoup
 import cv2
 
+from models import WeatherBase
+
 FORECAST_SITE = 'https://pogoda.mail.ru/prognoz/sankt_peterburg/june-2021/'
-MONTHS = {'июня': 'june', 'июля': 'july'}
+MONTHS = {'января': 'january', 'февраля': 'february', 'марта': 'march', 'апреля': 'april',
+          'мая': 'may', 'июня': 'june', 'июля': 'july', 'августа': 'august',
+          'сентября': 'september', 'октября': 'october', 'ноября': 'november', 'декабря': 'december'
+          }
 PICTURES = {'облачно': ['weather_img/cloud.jpg', (0, 0, 0)],
             'дождь': ['weather_img/rain.jpg', (255, 0, 0)],
             'дождь/гроза': ['weather_img/rain.jpg', (255, 0, 0)],
@@ -21,17 +26,11 @@ TEXT_COLOR = (255, 0, 0)
 DATE_POZ = (160, 230)
 TEMPERATURE_POZ = (100, 120)
 WEATHER_POZ = (200, 180)
-# WEATHER_PICTURE_POZ = (180, 60)
 
 
 class WeatherMaker:
-    def __init__(self, date_range):
-        self.date_range = date_range
+    def __init__(self):
         self.forecast_dict = {}
-
-    def get_forecast(self):
-        self.weather_parser()
-        pass
 
     def weather_parser(self):
         response = requests.get(FORECAST_SITE)
@@ -67,18 +66,19 @@ class ImageMaker:
         self.temperature = temperature
         self.weather = weather
 
-    def generate_image(self):
+    def generate_image(self, number):
         day_weather_image = cv2.imread(IMAGE_TEMPLATE)
 
         self.make_gradient(day_weather_image)
         self.insert_text(day_weather_image)
         self.insert_picture(day_weather_image)
 
-        # cv2.imshow('Result1', img3)
+        # cv2.imshow('weather image', day_weather_image)
         # self.viewimage(day_weather_image, 'weather image')
-
-        with open('weather_img.jpg', 'w'):
-            cv2.imwrite('weather_img.jpg', day_weather_image)
+        temp = 'weather_img_' + str(number)
+        output_file = temp + '.jpg'
+        with open(output_file, 'w'):
+            cv2.imwrite(output_file, day_weather_image)
 
     def insert_picture(self, day_weather_image):
         if self.weather in PICTURES:
@@ -107,20 +107,66 @@ class ImageMaker:
             if r < 255:
                 r += 1
 
-    def viewimage(self, image, name_of_window):
-        cv2.namedWindow(name_of_window, cv2.WINDOW_NORMAL)
-        cv2.imshow(name_of_window, image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+    # def viewimage(self, image, name_of_window):
+    #     cv2.namedWindow(name_of_window, cv2.WINDOW_NORMAL)
+    #     cv2.imshow(name_of_window, image)
+    #     cv2.waitKey(0)
+    #     cv2.destroyAllWindows()
 
 
-forecast = WeatherMaker(date_range='week')
-forecast.get_forecast()
+class DatabaseUpdater:
+    def __init__(self, weather_dict):
+        self.weather_dict = weather_dict
 
-my_data = '28 июня 2021'
-ddt, d2 = forecast.date_conversion(my_data)
-list1 = forecast.forecast_dict[ddt]
+    def save_forecast(self, date_from, time_range):
+        for day in range(time_range):
+            if date_from in self.weather_dict:
+                date = self.weather_dict[date_from][0]
+                temperature = self.weather_dict[date_from][1]
+                weather = self.weather_dict[date_from][2]
+                day_forecast = WeatherBase.create(
+                    date=date_from,
+                    date_rus=date,
+                    temperature=temperature,
+                    weather=weather
+                )
+                one_day = datetime.timedelta(weeks=0, days=1)
+                date_from += one_day
+            else:
+                return False
+        return True
+
+    def get_forecst(self, date_from, time_range):
+        forecast_list = []
+        for day in range(time_range):
+            day_forecast = WeatherBase.get_or_none(WeatherBase.date == date_from)
+            if day_forecast:
+                forecast_list.append(day_forecast)
+                one_day = datetime.timedelta(weeks=0, days=1)
+                date_from += one_day
+            else:
+                return None
+        return forecast_list
 
 
-im = ImageMaker(list1[0], list1[1], list1[2])
-im.generate_image()
+def handle_date():
+    while True:
+        print('Введите дату в формате хх месяц хххх')
+        input_date = input().lower()
+        date_list = input_date.split(' ')
+        if len(date_list) == 3:
+            month_rus = date_list[1]
+            if month_rus in MONTHS:
+                break
+            else:
+                print('Такого месяца не существует. Попробуйте ещё раз')
+        else:
+            print('Неверный формат даты. Попробуйте ещё раз.')
+    range_choice = input('Прогноз на какой период: 1. 1 день. 2. 3 дня. 3. 5 дней:')
+    if range_choice == '2':
+        time_range = 3
+    elif range_choice == '3':
+        time_range = 5
+    else:
+        time_range = 1
+    return input_date, time_range

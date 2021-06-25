@@ -46,3 +46,46 @@
 # Приконнектится по полученному url-пути к базе данных
 # Инициализировать её через DatabaseProxy()
 # https://peewee.readthedocs.io/en/latest/peewee/database.html#dynamically-defining-a-database
+
+from weather_engine import WeatherMaker, DatabaseUpdater, ImageMaker, handle_date
+
+forecast = WeatherMaker()
+forecast.weather_parser()
+forecast_base = DatabaseUpdater(forecast.forecast_dict)
+
+not_exit = True
+while not_exit:
+    print('\nВыберите действие: 1. добавить прогноз в базу данных. 2. Получить прогноз из базы данных. '
+          'Иначе - завершение программы:', end=' ')
+    choice = input()
+    if choice == '1':
+        print('Занесение прогноза в базу данных.')
+        input_date, time_range = handle_date()
+        date_dt, date_rus = forecast.date_conversion(input_date)
+        if forecast_base.save_forecast(date_dt, time_range):
+            print(f'прогноз с {date_rus} на {time_range} дней занесён в базу данных')
+        else:
+            print('Нет прогноза на этот период')
+    elif choice == '2':
+        print('Получение прогноза из базы данных.')
+        input_date, time_range = handle_date()
+        date_dt, date_rus = forecast.date_conversion(input_date)
+        forecast_list = forecast_base.get_forecst(date_dt, time_range)
+        if forecast_list:
+            print('Выберите действие: 1. создать открытку из прогноза. 2. Вывести прогноз на консоль.:', end=' ')
+            output_choice = input()
+            if output_choice == '1':
+                for number, day_forecast in enumerate(forecast_list):
+                    im = ImageMaker(day_forecast.date_rus, day_forecast.temperature, day_forecast.weather)
+                    im.generate_image(number)
+                print('открытки сохранены в файлах weather_img_х.jpg')
+            elif output_choice == '2':
+                for day_forecast in forecast_list:
+                    print(f'Прогноз на {day_forecast.date_rus}: {day_forecast.temperature},  {day_forecast.weather}.')
+            else:
+                print('Неверный выбор.')
+        else:
+            print('Прогноза на этот период нет в базе')
+    else:
+        not_exit = False
+        print('Конец работы.')
