@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import cv2
 
 from models import WeatherBase
-
+# TODO Чтобы все не было в куче "работа с базой, парсинг, создание изображения" разнестие по модулям.
 FORECAST_SITE = 'https://pogoda.mail.ru/prognoz/sankt_peterburg/june-2021/'
 MONTHS = {'января': 'january', 'февраля': 'february', 'марта': 'march', 'апреля': 'april',
           'мая': 'may', 'июня': 'june', 'июля': 'july', 'августа': 'august',
@@ -124,6 +124,7 @@ class DatabaseUpdater:
                 date = self.weather_dict[date_from][0]
                 temperature = self.weather_dict[date_from][1]
                 weather = self.weather_dict[date_from][2]
+                # TODO Зачем переменная? Метод "create" автоматически сохраняет таблицу
                 day_forecast = WeatherBase.create(
                     date=date_from,
                     date_rus=date,

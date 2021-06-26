@@ -48,13 +48,17 @@
 # https://peewee.readthedocs.io/en/latest/peewee/database.html#dynamically-defining-a-database
 
 from weather_engine import WeatherMaker, DatabaseUpdater, ImageMaker, handle_date
-
+# TODO Весь основной код сделайте функцией, и вызывайте ее в конструкции if __name__ == '__main__'
 forecast = WeatherMaker()
 forecast.weather_parser()
+# TODO Класс с базой вроде есть, метод добавления есть, погода парсится.
+#  А погоду в базу почему сразу не добавляете?
 forecast_base = DatabaseUpdater(forecast.forecast_dict)
 
 not_exit = True
 while not_exit:
+    # TODO Если строки длинные делайте переносы, и лучше сразу записывать нужные строки в "input"
+    #  а не использовать дополнительный print
     print('\nВыберите действие: 1. добавить прогноз в базу данных. 2. Получить прогноз из базы данных. '
           'Иначе - завершение программы:', end=' ')
     choice = input()
@@ -76,6 +80,7 @@ while not_exit:
             output_choice = input()
             if output_choice == '1':
                 for number, day_forecast in enumerate(forecast_list):
+                    # TODO Экземпляры классов лучше создавать вне циклов и условий
                     im = ImageMaker(day_forecast.date_rus, day_forecast.temperature, day_forecast.weather)
                     im.generate_image(number)
                 print('открытки сохранены в файлах weather_img_х.jpg')
