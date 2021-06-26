@@ -47,50 +47,66 @@
 # Инициализировать её через DatabaseProxy()
 # https://peewee.readthedocs.io/en/latest/peewee/database.html#dynamically-defining-a-database
 
-from weather_engine import WeatherMaker, DatabaseUpdater, ImageMaker, handle_date
-# TODO Весь основной код сделайте функцией, и вызывайте ее в конструкции if __name__ == '__main__'
-forecast = WeatherMaker()
-forecast.weather_parser()
-# TODO Класс с базой вроде есть, метод добавления есть, погода парсится.
-#  А погоду в базу почему сразу не добавляете?
-forecast_base = DatabaseUpdater(forecast.forecast_dict)
 
-not_exit = True
-while not_exit:
-    # TODO Если строки длинные делайте переносы, и лучше сразу записывать нужные строки в "input"
-    #  а не использовать дополнительный print
-    print('\nВыберите действие: 1. добавить прогноз в базу данных. 2. Получить прогноз из базы данных. '
-          'Иначе - завершение программы:', end=' ')
-    choice = input()
-    if choice == '1':
-        print('Занесение прогноза в базу данных.')
-        input_date, time_range = handle_date()
-        date_dt, date_rus = forecast.date_conversion(input_date)
-        if forecast_base.save_forecast(date_dt, time_range):
-            print(f'прогноз с {date_rus} на {time_range} дней занесён в базу данных')
-        else:
-            print('Нет прогноза на этот период')
-    elif choice == '2':
-        print('Получение прогноза из базы данных.')
-        input_date, time_range = handle_date()
-        date_dt, date_rus = forecast.date_conversion(input_date)
-        forecast_list = forecast_base.get_forecst(date_dt, time_range)
-        if forecast_list:
-            print('Выберите действие: 1. создать открытку из прогноза. 2. Вывести прогноз на консоль.:', end=' ')
-            output_choice = input()
-            if output_choice == '1':
-                for number, day_forecast in enumerate(forecast_list):
-                    # TODO Экземпляры классов лучше создавать вне циклов и условий
-                    im = ImageMaker(day_forecast.date_rus, day_forecast.temperature, day_forecast.weather)
-                    im.generate_image(number)
-                print('открытки сохранены в файлах weather_img_х.jpg')
-            elif output_choice == '2':
-                for day_forecast in forecast_list:
-                    print(f'Прогноз на {day_forecast.date_rus}: {day_forecast.temperature},  {day_forecast.weather}.')
+from parser_module import WeatherMaker
+from image_module import ImageMaker
+from database_module import DatabaseUpdater
+from utils import handle_date, last_week
+
+
+# Весь основной код сделайте функцией, и вызывайте ее в конструкции if __name__ == '__main__'
+def main():
+    forecast = WeatherMaker()
+    forecast.weather_parser()
+    # Класс с базой вроде есть, метод добавления есть, погода парсится.
+    #  А погоду в базу почему сразу не добавляете?
+    forecast_base = DatabaseUpdater(forecast.forecast_dict)
+    date_dt, time_range = last_week()
+    forecast_base.save_forecast(date_dt, time_range)
+
+    not_exit = True
+    while not_exit:
+        # Если строки длинные делайте переносы, и лучше сразу записывать нужные строки в "input"
+        #  а не использовать дополнительный print
+        choice = input('\nВыберите действие: 1. добавить прогноз в базу данных. 2. Получить прогноз из базы данных. '
+                       'Иначе - завершение программы: ')
+        if choice == '1':
+            print('Занесение прогноза в базу данных.')
+            input_date, time_range = handle_date()
+            date_dt, date_rus = forecast.date_conversion(input_date)
+            if forecast_base.save_forecast(date_dt, time_range):
+                print(f'прогноз с {date_rus} на {time_range} дн. занесён в базу данных')
             else:
-                print('Неверный выбор.')
+                print('Нет прогноза на этот период')
+        elif choice == '2':
+            print('Получение прогноза из базы данных.')
+            input_date, time_range = handle_date()
+            date_dt, date_rus = forecast.date_conversion(input_date)
+            forecast_list = forecast_base.get_forecast(date_dt, time_range)
+            if forecast_list:
+                output_choice = input('Выберите действие: 1. создать открытку из прогноза.'
+                                      ' 2. Вывести прогноз на консоль.:')
+                if output_choice == '1':
+                    for number, day_forecast in enumerate(forecast_list):
+                        # Экземпляры классов лучше создавать вне циклов и условий
+                        # TODO тут нужно сделать несколько открыток с разными данными из forecast_list.
+                        #  Как это сделать вне цикла? И делать это нужно, если прогноз есть и выбраны открытки.
+                        #  Как это сделать вне условий?
+                        im = ImageMaker(day_forecast.date_rus, day_forecast.temperature, day_forecast.weather)
+                        im.generate_image(number)
+                    print('открытки сохранены в файлах weather_img_х.jpg')
+                elif output_choice == '2':
+                    for day_forecast in forecast_list:
+                        print(
+                            f'Прогноз на {day_forecast.date_rus}: {day_forecast.temperature},  {day_forecast.weather}.')
+                else:
+                    print('Неверный выбор.')
+            else:
+                print('Прогноза на этот период нет в базе')
         else:
-            print('Прогноза на этот период нет в базе')
-    else:
-        not_exit = False
-        print('Конец работы.')
+            not_exit = False
+            print('Конец работы.')
+
+
+if __name__ == '__main__':
+    main()
